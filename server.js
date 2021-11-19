@@ -35,7 +35,7 @@ app.use(express.static(__dirname + "/public"));
  * ----- ----- ROUTES ----- ----- ----- ----- ----- ----- 
  */
 
-app.get('/', (req, res) => {
+app.get("/docker-hbv-kms-http/", (req, res) => {
     res.send('Hello World!')
 })
 
