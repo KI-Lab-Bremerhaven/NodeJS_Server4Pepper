@@ -10,11 +10,11 @@ const https = require("https");
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
  * * * -----> ROUTES <----- ----- ----- */
 
-// http://localhost:3000/crypto?symbol=btc-usdt
-router.get("/crypto", (req, res, next) => {
-    if (!(req.query && req.query.subject)) {
-        res.status(404).end();
-    } else if (req.query.subject === "price" && req.query.symbol) {
+// http://localhost:3000/crypto?subject=price&symbol=BTC-USDT
+router.get("/docker-hbv-kms-http/crypto", (req, res, next) => {
+    
+    if (!(req.query && req.query.subject)) res.status(404).end();
+    if (req.query.subject === "price" && req.query.symbol) {
         const
             base_url = "api.kucoin.com",
             endpoint = "/api/v1/market/orderbook/level1?symbol=" + req.query.symbol.toUpperCase(); // req.body.symbol

@@ -33,8 +33,6 @@ app.set('views', [
     path.join(__dirname, 'views'),
 ]);
 
-
-
 app.use(routes);
 app.use(express.static(__dirname + "/public"));
 
@@ -47,7 +45,6 @@ app.get("/docker-hbv-kms-http/", (req, res) => {
 })
 
 function errorHandler(req, res, next) {
-    // how to handle errors in express middleware
     res.status(404).end();
 }
 
