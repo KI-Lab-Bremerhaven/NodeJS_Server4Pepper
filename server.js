@@ -42,7 +42,18 @@ app.use(express.static(__dirname + "/public"));
 
 app.get("/docker-hbv-kms-http/", (req, res) => {
     res.render(""); // renders index.ejs
-})
+});
+
+app.get("/docker-hbv-kms-http/mensadata", (req, res) => {
+    filePath = path.join(__dirname, '/public/mensadata.json');
+    var jsonData = JSON.parse(fs.readFileSync(filePath, 'latin1'));
+    res.send(jsonData);
+});
+
+app.get("/docker-hbv-kms-http/mensadata/img", (req, res) => {
+    res.render("mensaimg");
+});
+
 
 function errorHandler(req, res, next) {
     res.status(404).end();
