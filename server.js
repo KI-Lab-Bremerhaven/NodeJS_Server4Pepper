@@ -51,7 +51,10 @@ app.get("/docker-hbv-kms-http/mensadata", (req, res) => {
 });
 
 app.get("/docker-hbv-kms-http/mensadata/img", (req, res) => {
-    res.render("mensaimg");
+    filePath = path.join(__dirname, '/public/images/mensaplan.png');
+    var img = fs.readFileSync(filePath);
+    res.writeHead(200, {'Content-Type': 'image/png' });
+    res.end(img, 'binary');
 });
 
 

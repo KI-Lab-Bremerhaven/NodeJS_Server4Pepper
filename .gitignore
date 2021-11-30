@@ -1,3 +1,6 @@
 .DS_STORE
 node_modules/
 .sqp
+public/Mensadata.json
+public/Mensadata.pdf
+public/images/mensaplan.png
