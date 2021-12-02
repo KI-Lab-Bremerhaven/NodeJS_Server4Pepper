@@ -44,19 +44,6 @@ app.get("/docker-hbv-kms-http/", (req, res) => {
     res.render(""); // renders index.ejs
 });
 
-app.get("/docker-hbv-kms-http/mensadata", (req, res) => {
-    filePath = path.join(__dirname, '/public/mensadata.json');
-    var jsonData = JSON.parse(fs.readFileSync(filePath, 'latin1'));
-    res.send(jsonData);
-});
-
-app.get("/docker-hbv-kms-http/mensadata/img", (req, res) => {
-    filePath = path.join(__dirname, '/public/images/mensaplan.png');
-    var img = fs.readFileSync(filePath);
-    res.writeHead(200, {'Content-Type': 'image/png' });
-    res.end(img, 'binary');
-});
-
 
 function errorHandler(req, res, next) {
     res.status(404).end();

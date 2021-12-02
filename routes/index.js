@@ -6,6 +6,15 @@
 const router = require("express").Router();
 const https = require("https");
 
+
+/* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
+ * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
+ * * * -----> SETUP <----- ----- ----- */
+
+router.use(require("./mensa"));
+router.use(require("./timetable"));
+router.use(require("./dialog"));
+
 /* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
  * * * -----> ROUTES <----- ----- ----- */
@@ -13,7 +22,7 @@ const https = require("https");
 
 // http://localhost:3000/crypto?subject=price&symbol=BTC-USDT
 router.get("/docker-hbv-kms-http/crypto", (req, res, next) => {
-    
+
     if (!(req.query && req.query.subject)) res.status(404).end();
     if (req.query.subject === "price" && req.query.symbol) {
         const

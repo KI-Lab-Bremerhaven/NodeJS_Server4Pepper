@@ -9,5 +9,4 @@ module.exports.DEVELOPMENT = {
 module.exports.PRODUCTION = {
     PORT: process.env.PROD_PORT,
     URL: "https://informatik.hs-bremerhaven.de/docker-hbv-kms-http/"
-
 };
