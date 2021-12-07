@@ -3,7 +3,7 @@ dotenv.config();
 
 module.exports.DEVELOPMENT = {
     PORT: process.env.DEV_PORT,
-    URL: "http://localhost"
+    URL: `http://localhost:${process.env.DEV_PORT}/docker-hbv-kms-http/`
 };
 
 module.exports.PRODUCTION = {
