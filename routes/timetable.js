@@ -6,11 +6,15 @@ const router = require("express").Router();
 
 const jsdom = require('jsdom');
 const {
+    restart
+} = require("nodemon");
+const {
     JSDOM
 } = jsdom;
 
 const {
-    myRequests
+    myRequests,
+    asyncRequests
 } = require("./../lib/requests");
 
 /* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
@@ -22,6 +26,12 @@ const {
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
  * * * -----> R O U E T S <----- ----- ----- */
 
+router.get("/docker-hbv-kms-http/ip", (req, res, next) => {
+    res.status(200).json({
+        ip: req.headers['x-forwarded-for'] || req.socket.remoteAddress
+    })
+});
+
 router.get("/docker-hbv-kms-http/timetable", (req, res, next) => {
 
     /*
@@ -32,16 +42,28 @@ router.get("/docker-hbv-kms-http/timetable", (req, res, next) => {
     const query = req.query;
 
     if (!(typeof query !== "undefined" && query &&
-            typeof query.course !== "undefined" && query.course &&
-            typeof query.semester !== "undefined" && query.semester
+            typeof query.course !== "undefined" && query.course // &&
+            // typeof query.semester !== "undefined" && query.semester
         )) res.status(404).end();
     else {
         const
             course = query.course.toUpperCase(),
-            semester = query.semester,
             kw = (typeof query.kw !== "undefined" && query.kw) ? query.kw : 48;
+        var
+            semester = null,
+            timetable = {
+                "Mo": [],
+                "Di": [],
+                "Mi": [],
+                "Do": [],
+                "Fr": []
+            };
 
-        const course_name = `${course}_B${semester}`
+        if (typeof query.semester !== "undefined" && query.semester) semester = query.semester
+
+        const
+            course_names = [`${course}_B1`, `${course}_B3`, `${course}_B5`, `${course}_B7`],
+            course_name = (semester) ? `${course}_B${semester}` : null;
 
         try {
             // get the courseId's
@@ -55,48 +77,117 @@ router.get("/docker-hbv-kms-http/timetable", (req, res, next) => {
                     else {
                         let
                             dom = new JSDOM(response),
-                            courses = {};
+                            courses = {},
+                            course_ids = [], // all courseIds 
+                            custom_course_id = null; // id for one specific semester
+
                         Array.from(dom.window.document.getElementsByName("identifier")[0].options).forEach(option => {
                             courses[option.text] = option.value;
+                            if (option.text === course_name) custom_course_id = option.value;
                         });
-                        const courseId = courses[course_name];
 
-                        // get the timetable by courseId
-                        myRequests(
-                            data_to_send = {},
-                            host = "www4.hs-bremerhaven.de",
-                            endpoint = `/fb2/ws2122.php?action=showplan&weeks=${kw}&fb=%23SPLUS938DBF&idtype=&listtype=Text-Listen&template=Set&objectclass=Studenten-Sets&identifier=${courseId}&days=1;2;3;4;5&tabstart=41`,
-                            method = "GET",
-                            callback = (response2) => {
-                                if (!response2.statusCode === 200) res.status(reponse2.statusCode).end();
-                                else {
-                                    dom = new JSDOM(response2)
-                                    let timetable = {
-                                        "Mo": [],
-                                        "Di": [],
-                                        "Mi": [],
-                                        "Do": [],
-                                        "Fr": []
-                                    };
-                                    Array.from(dom.window.document.getElementsByTagName("tr")).forEach(table_data => {
-                                        if (Object.keys(timetable).includes(table_data.getElementsByTagName("td")[0].innerHTML)) {
-                                            timetable[table_data.getElementsByTagName("td")[0].innerHTML].push({
-                                                begin: table_data.getElementsByTagName("td")[1].innerHTML,
-                                                end: table_data.getElementsByTagName("td")[2].innerHTML,
-                                                course: table_data.getElementsByTagName("td")[3].innerHTML,
-                                                prof: table_data.getElementsByTagName("td")[4].innerHTML,
-                                            })
-                                        }
-                                    });
-                                    res.status(200).json(timetable).end(); // return the timetable
+                        for (var id = 0; id < course_names.length; id++) course_ids.push(courses[course_names[id]])
+
+                        function getEndpoint(i, custom = false) {
+                            if (custom) return `/fb2/ws2122.php?action=showplan&weeks=${kw}&fb=%23SPLUS938DBF&idtype=&listtype=Text-Listen&template=Set&objectclass=Studenten-Sets&identifier=${custom_course_id}&days=1;2;3;4;5&tabstart=41`
+                            else return `/fb2/ws2122.php?action=showplan&weeks=${kw}&fb=%23SPLUS938DBF&idtype=&listtype=Text-Listen&template=Set&objectclass=Studenten-Sets&identifier=${course_ids[i]}&days=1;2;3;4;5&tabstart=41`;
+                        }
+
+                        function uptdateTimeTable(timetable, dom) {
+                            Array.from(dom.window.document.getElementsByTagName("tr")).forEach(table_data => {
+                                if (Object.keys(timetable).includes(table_data.getElementsByTagName("td")[0].innerHTML)) {
+                                    timetable[table_data.getElementsByTagName("td")[0].innerHTML].push({
+                                        begin: table_data.getElementsByTagName("td")[1].innerHTML,
+                                        end: table_data.getElementsByTagName("td")[2].innerHTML,
+                                        course: table_data.getElementsByTagName("td")[3].innerHTML,
+                                        prof: table_data.getElementsByTagName("td")[4].innerHTML,
+                                    })
                                 }
                             });
+                            return timetable;
+                        }
+
+                        // J A - DAS HIER IST NICHT SHÖN
+                        // --> aber es sind asynchrone dinger, die alle passieren müssen und die route kann sonst nicht asynchron gestaltet werden
+                        myRequests(data_to_send = {},
+                            host = "www4.hs-bremerhaven.de",
+                            endpoint = getEndpoint(0, custom_course_id),
+                            method = "GET",
+                            callback = (response) => {
+                                // console.log(response)
+                                if (!response.statusCode === 200) res.status(reponse.statusCode).end();
+                                else if (typeof query.htmlOnly !== "undefined" && query.htmlOnly) {
+                                    res.set({ // not working for some reason
+                                        'content-type': 'text/html; charset=UTF-8'
+                                    });
+                                    res.send(response).end();
+                                } else {
+                                    timetable = uptdateTimeTable(timetable, new JSDOM(response));
+
+                                    if (custom_course_id) res.status(200).json(timetable).end();
+                                    else if (course_ids.length > 1) myRequests(data_to_send = {},
+                                        host = "www4.hs-bremerhaven.de",
+                                        endpoint = getEndpoint(1),
+                                        method = "GET",
+                                        callback = (response) => {
+                                            // console.log(response)
+                                            if (!response.statusCode === 200) res.status(reponse.statusCode).end();
+                                            else {
+                                                timetable = uptdateTimeTable(timetable, new JSDOM(response));
+
+                                                if (course_ids.length > 2) myRequests(data_to_send = {},
+                                                    host = "www4.hs-bremerhaven.de",
+                                                    endpoint = getEndpoint(2),
+                                                    method = "GET",
+                                                    callback = (response) => {
+                                                        if (!response.statusCode === 200) res.status(reponse.statusCode).end();
+                                                        else {
+                                                            timetable = uptdateTimeTable(timetable, new JSDOM(response));
+
+                                                            if (course_ids.length > 3) myRequests(data_to_send = {},
+                                                                host = "www4.hs-bremerhaven.de",
+                                                                endpoint = getEndpoint(3),
+                                                                method = "GET",
+                                                                callback = (response) => {
+                                                                    if (!response.statusCode === 200) res.status(reponse.statusCode).end();
+                                                                    else {
+                                                                        timetable = uptdateTimeTable(timetable, new JSDOM(response));
+
+                                                                        if (course_ids.length > 4) myRequests(data_to_send = {},
+                                                                            host = "www4.hs-bremerhaven.de",
+                                                                            endpoint = getEndpoint(4),
+                                                                            method = "GET",
+                                                                            callback = (response) => {
+                                                                                if (!response.statusCode === 200) res.status(reponse.statusCode).end();
+                                                                                else {
+                                                                                    timetable = uptdateTimeTable(timetable, new JSDOM(response));
+                                                                                    res.status(200).json(timetable).end();
+                                                                                }
+                                                                            }
+                                                                        );
+                                                                        else res.status(200).json(timetable).end();
+                                                                    }
+                                                                }
+                                                            );
+                                                            else res.status(200).json(timetable).end();
+                                                        }
+                                                    }
+                                                );
+                                                else res.status(200).json(timetable).end();
+                                            }
+                                        }
+                                    );
+                                    else res.status(200).json(timetable).end();
+                                }
+                            }
+                        );
                     }
-                }
-            );
+                });
         } catch (err) {
-            console.log(`some error: ${err}`);
-            res.status(500).end();
+            console.log(`some error: ${err.message}`);
+            res.status(500).json({
+                message: err.message
+            }).end();
         }
     }
 });
