@@ -5,12 +5,13 @@
 
 const router = require("express").Router();
 const https = require("https");
-
+require('dotenv').config()
 
 /* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
  * * * -----> S E T U P <----- ----- ----- */
 
+if (process.env.NODE_ENV !== "DEV") router.use(require("./collector"));
 router.use(require("./mensa"));
 router.use(require("./timetable"));
 router.use(require("./dialog"));

@@ -4,3 +4,4 @@ node_modules/
 public/Mensadata.json
 public/Mensadata.pdf
 public/images/mensaplan.png
+.env

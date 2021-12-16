@@ -1,0 +1,10 @@
+# to run this project, you need to have a file named .env in the root directory of this project
+# its contents must be:
+
+PROD_PORT=<your port>
+DEV_PORT=<your port>
+
+DB_HOST=<database host>
+DB_USER=<database user>
+DB_PASSWORD=<database password>
+DB_NAME=<database name>

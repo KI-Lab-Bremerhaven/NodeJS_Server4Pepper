@@ -3,18 +3,13 @@
  * * * -----> IMPORTS <----- ----- ----- */
 
 const router = require("express").Router();
-
 const jsdom = require('jsdom');
-const {
-    restart
-} = require("nodemon");
 const {
     JSDOM
 } = jsdom;
 
 const {
-    myRequests,
-    asyncRequests
+    myRequests
 } = require("./../lib/requests");
 
 /* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
@@ -42,8 +37,7 @@ router.get("/docker-hbv-kms-http/timetable", (req, res, next) => {
     const query = req.query;
 
     if (!(typeof query !== "undefined" && query &&
-            typeof query.course !== "undefined" && query.course // &&
-            // typeof query.semester !== "undefined" && query.semester
+            typeof query.course !== "undefined" && query.course
         )) res.status(404).end();
     else {
         const
