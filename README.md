@@ -20,6 +20,13 @@ $ npm --version
 7.20.3
 ```
 
+- mysql (v8+)
+
+```bash
+$ mysql --version
+Ver 8.0.27 for macos12.0 on x86_64 (Homebrew)
+```
+
 ## Installation
 
 ```bash
@@ -33,6 +40,14 @@ git clone https://github.com/ProjectPepperHSB/NodeJS_Server4Pepper.git
 ```bash
 NodeJS_Server4Pepper:~$ npm i
 ```
+
+- create database (edit .env for custom credentials)
+
+```bash
+mysql -e "CREATE DATABASE pepperbackend"
+```
+
+- edit .env file (example configuration in .exanple_env)
 
 ## Run the application
 
@@ -51,6 +66,3 @@ NodeJS_Server4Pepper:~$ npm run prod
 ## Notes
 
 ## Todo
-
-- create new routes
-- connect to nextcloud DB

@@ -8,3 +8,8 @@ DB_HOST=<database host>
 DB_USER=<database user>
 DB_PASSWORD=<database password>
 DB_NAME=<database name>
+
+DB_HOST_dev=127.0.0.1
+DB_USER_dev=root
+DB_PASSWORD_dev=""
+DB_NAME_dev=pepperbackend

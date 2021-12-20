@@ -4,13 +4,10 @@
 
 const express = require('express')
 const http = require("http");
-const fs = require("fs");
 
+const cookieParser = require('cookie-parser')
 const path = require('path');
 var routes = require("./routes");
-const {
-    builtinModules
-} = require("module");
 
 const {
     PORT,
@@ -27,6 +24,7 @@ app.use(express.urlencoded({
     extended: true
 }));
 
+app.use(cookieParser());
 app.set("view engine", "ejs");
 app.engine('ejs', require('ejs').__express);
 app.set('views', [

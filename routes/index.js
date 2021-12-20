@@ -5,7 +5,11 @@
 
 const router = require("express").Router();
 const https = require("https");
-require('dotenv').config()
+require('dotenv').config();
+
+const {
+    verifyToken
+} = require("../middleware/auth")
 
 /* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
@@ -15,6 +19,7 @@ if (process.env.NODE_ENV !== "DEV") router.use(require("./collector"));
 router.use(require("./mensa"));
 router.use(require("./timetable"));
 router.use(require("./dialog"));
+router.use(require("./login"));
 
 /* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
@@ -67,7 +72,9 @@ router.get("/docker-hbv-kms-http/crypto", (req, res, next) => {
     }
 });
 
-
+router.get('/docker-hbv-kms-http/dashboard', verifyToken, (req, res, next) => {
+    res.render('dashboard');
+})
 /* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
  * * * -----> E X P O R T S <----- ----- ----- */
