@@ -2,7 +2,6 @@
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
  * * * -----> I M P O R T S <----- ----- ----- */
 
-
 const router = require("express").Router();
 const https = require("https");
 require('dotenv').config();
@@ -24,7 +23,6 @@ router.use(require("./login"));
 /* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
  * * * -----> R O U T E S <----- ----- ----- */
-
 
 // http://localhost:3000/crypto?subject=price&symbol=BTC-USDT
 router.get("/docker-hbv-kms-http/crypto", (req, res, next) => {
@@ -72,9 +70,11 @@ router.get("/docker-hbv-kms-http/crypto", (req, res, next) => {
     }
 });
 
+// only if logged in
 router.get('/docker-hbv-kms-http/dashboard', verifyToken, (req, res, next) => {
     res.render('dashboard');
 })
+
 /* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
  * * * -----> E X P O R T S <----- ----- ----- */

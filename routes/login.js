@@ -14,7 +14,8 @@ const JWT_EXPIRE_TIME_IN_S = 120; //sekunden
 
 const {
     generatePassword,
-    validatePassword
+    validatePassword,
+    generateHash
 } = require("./../lib/utils");
 require('dotenv').config()
 
@@ -51,7 +52,7 @@ pool.getConnection(function (err, con) {
             con.query("SELECT username FROM users WHERE username = 'admin'", (err, result, field) => {
                 if (result.length !== 0) return;
                 else {
-                    const password = Date.now().toString();
+                    const password = generateHash(20);
                     console.log(`ADMIN PASSWORD: ${password}`)
 
                     const saltHash = generatePassword(password);
@@ -63,7 +64,7 @@ pool.getConnection(function (err, con) {
                     sql = `INSERT INTO users (username, hash, salt) VALUES ('admin', '${hash}', '${salt}')`;
                     con.query(sql, function (err, result) {
                         if (err) throw err;
-                        else console.log("Admin user created");
+                        else console.log("Admin user created!");
                     });
                 }
             });
@@ -85,10 +86,8 @@ router.post("/docker-hbv-kms-http/login", (req, res, next) => {
 
     if (!(typeof body.username_input !== "undefined" && body.username_input && typeof body.password_input !== "undefined" && body.password_input)) res.status(404).end();
     else {
-
         pool.getConnection(function (err, con) {
             if (err) throw err;
-            // console.log("Connected!");
             var sql = `SELECT hash, salt FROM users WHERE username = '${body.username_input}'`;
             con.query(sql, function (err, result, field) {
                 if (err) throw err // || result.length === 0) res.status(404).end();
@@ -111,7 +110,6 @@ router.post("/docker-hbv-kms-http/login", (req, res, next) => {
             });
         });
     }
-
 });
 
 /* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
