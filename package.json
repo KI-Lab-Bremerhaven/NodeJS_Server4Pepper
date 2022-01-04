@@ -20,6 +20,7 @@
     "jsondom": "^0.4.1",
     "jsonwebtoken": "^8.5.1",
     "mysql": "^2.18.1",
+    "mysql-server": "^1.0.5",
     "nodemon": "^2.0.15",
     "pm2": "^5.1.2"
   }

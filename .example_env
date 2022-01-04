@@ -1,5 +1,5 @@
 # to run this project, you need to have a file named .env in the root directory of this project
-# its contents must be:
+# it must contain:
 
 PROD_PORT=<your port>
 DEV_PORT=<your port>

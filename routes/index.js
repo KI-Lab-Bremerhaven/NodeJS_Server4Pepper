@@ -6,25 +6,25 @@ const router = require("express").Router();
 const https = require("https");
 require('dotenv').config();
 
-const {
-    verifyToken
-} = require("../middleware/auth")
+
 
 /* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
  * * * -----> S E T U P <----- ----- ----- */
 
-if (process.env.NODE_ENV !== "DEV") router.use(require("./collector"));
-router.use(require("./mensa"));
-router.use(require("./timetable"));
-router.use(require("./dialog"));
-router.use(require("./login"));
+[
+    "./dashboard", "./collector",
+    "./mensa", "./timetable", "./dialog",
+    "./auth/login", "./auth/logout"
+].forEach((elem) => {
+    router.use(require(elem));
+});
 
 /* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
  * * * -----> R O U T E S <----- ----- ----- */
 
-// http://localhost:3000/crypto?subject=price&symbol=BTC-USDT
+// http://localhost:3000/crypto?subject=price&symbol=BTC-USDT <- for testing only
 router.get("/docker-hbv-kms-http/crypto", (req, res, next) => {
 
     if (!(req.query && req.query.subject)) res.status(404).end();
@@ -70,10 +70,7 @@ router.get("/docker-hbv-kms-http/crypto", (req, res, next) => {
     }
 });
 
-// only if logged in
-router.get('/docker-hbv-kms-http/dashboard', verifyToken, (req, res, next) => {
-    res.render('dashboard');
-})
+
 
 /* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 

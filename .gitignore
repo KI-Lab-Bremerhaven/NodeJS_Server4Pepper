@@ -1,7 +1,10 @@
 .DS_STORE
-node_modules/
 .sqp
+.env
+
+node_modules/
 public/Mensadata.json
 public/Mensadata.pdf
 public/images/mensaplan.png
-.env
+
+id_rsa_priv.pem

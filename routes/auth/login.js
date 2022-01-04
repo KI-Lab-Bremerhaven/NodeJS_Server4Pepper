@@ -8,15 +8,15 @@ const router = require("express").Router();
 
 var jwt = require("jsonwebtoken");
 
-const RSA_PRIVATE_KEY = require("fs").readFileSync(`${__dirname}/../keys/id_rsa_priv.pem`);
-const JWT_EXPIRE_TIME_IN_S = 120; //sekunden
+const RSA_PRIVATE_KEY = require("fs").readFileSync(`${__dirname}/../../keys/id_rsa_priv.pem`);
+const JWT_EXPIRE_TIME_IN_S = 60 * 60 * 24 * 14 // 14 days
 
 
 const {
     generatePassword,
     validatePassword,
     generateHash
-} = require("./../lib/utils");
+} = require("../../lib/utils");
 require('dotenv').config()
 
 const {
@@ -24,7 +24,8 @@ const {
     DB_USER,
     DB_PASSWORD,
     DB_NAME
-} = (process.env.NODE_ENV === "PROD") ? require("./../config").PRODUCTION: require("../config").DEVELOPMENT;
+} = (process.env.NODE_ENV === "PROD") ? require("../../config").PRODUCTION: require("../../config").DEVELOPMENT;
+
 /* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
  * * * -----> S E T U P <----- ----- ----- */

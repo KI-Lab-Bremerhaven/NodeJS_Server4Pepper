@@ -4,8 +4,19 @@
 
 
 const mysql = require('mysql');
+const {
+    verifyToken
+} = require('../middleware/auth');
 const router = require("express").Router();
 require('dotenv').config()
+
+const {
+    DB_HOST,
+    DB_USER,
+    DB_PASSWORD,
+    DB_NAME
+} = (process.env.NODE_ENV === "PROD") ? require("./../config").PRODUCTION: require("../config").DEVELOPMENT;
+
 
 /* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
@@ -21,24 +32,27 @@ const dirty_sql_words = [
 
 var pool = mysql.createPool({
     connectionLimit: 10, // default = 10
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME
+    host: DB_HOST,
+    user: DB_USER,
+    password: DB_PASSWORD,
+    database: DB_NAME
 });
 
 
 // this initializes the table where we want to store the data
 pool.getConnection(function (err, con) {
     if (err) throw err;
-    // console.log("Connected!");
-    var sql = "CREATE TABLE IF NOT EXISTS pepper_data (data_id INT NOT NULL AUTO_INCREMENT, distance ";
-    sql += "VARCHAR(20), age VARCHAR(20), gender VARCHAR(20), basic_emotion VARCHAR(50), pleasure_state VARCHAR(30), excitement_state VARCHAR(30),";
-    sql += "smile_state VARCHAR(30), dialog_time VARCHAR(30), ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, PRIMARY KEY (data_id))";
-    con.query(sql, function (err, result) {
-        if (err) throw err;
-        // console.log("Table created");
-    });
+    else {
+        //  console.log("Connected!");
+        const table_name = "pepper_data"
+        var sql = `CREATE TABLE IF NOT EXISTS ${table_name} (data_id INT NOT NULL AUTO_INCREMENT, distance `;
+        sql += "VARCHAR(20), age VARCHAR(20), gender VARCHAR(20), basic_emotion VARCHAR(50), pleasure_state VARCHAR(30), excitement_state VARCHAR(30),";
+        sql += "smile_state VARCHAR(30), dialog_time VARCHAR(30), ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, PRIMARY KEY (data_id))";
+        con.query(sql, function (err, result) {
+            if (err) throw err;
+            //else console.log(`Table ${table_name} created`);
+        });
+    }
 });
 
 /* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
@@ -78,30 +92,35 @@ router.get("/docker-hbv-kms-http/collector", (req, res, next) => {
         };
 
         pool.getConnection(function (err, con) {
-            if (err) throw err; // res.status(500).end();
-            var sql = `INSERT INTO pepper_data (distance, age, gender, basic_emotion, pleasure_state, excitement_state, smile_state, dialog_time) VALUES`;
-            sql += `('${distance.toString()}', '${age.toString()}', '${gender.toString()}', '${basic_emotion.toString()}', `
-            sql += `'${pleasure_state.toString()}', '${excitement_state.toString()}', '${smile_state.toString()}', '${dialog_time.toString()}')`;
+            if (err) res.json({
+                message: "Error while connecting to Database"
+            }).end();
+            else {
+                var sql = `INSERT INTO pepper_data (distance, age, gender, basic_emotion, pleasure_state, excitement_state, smile_state, dialog_time) VALUES`;
+                sql += `('${distance.toString()}', '${age.toString()}', '${gender.toString()}', '${basic_emotion.toString()}', `
+                sql += `'${pleasure_state.toString()}', '${excitement_state.toString()}', '${smile_state.toString()}', '${dialog_time.toString()}')`;
 
-            con.query(sql, function (err, result) {
-                if (err) throw err;
-                con.release()
-                res.status(200).end();
-            });
-        });
-    } else if (req.query.subject === "getData") {
-        // https://informatik.hs-bremerhaven.de/docker-hbv-kms-http/collector?subject=getData
-        pool.getConnection(function (err, con) {
-            con.query("SELECT * FROM pepper_data", function (err, rows) {
-                if (err) throw err;
-
-                console.log(rows.length);
-                res.send(JSON.stringify(rows));
-            });
+                con.query(sql, function (err, result) {
+                    if (err) throw err;
+                    con.release()
+                    res.status(200).end();
+                });
+            }
         });
     }
 });
 
+router.get("/docker-hbv-kms-http/getData", verifyToken, (req, res, next) => {
+    // https://informatik.hs-bremerhaven.de/docker-hbv-kms-http/getData
+    pool.getConnection(function (err, con) {
+        con.query("SELECT * FROM pepper_data", function (err, rows) {
+            if (err) throw err;
+
+            console.log(rows.length);
+            res.send(JSON.stringify(rows));
+        });
+    });
+})
 
 /* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
