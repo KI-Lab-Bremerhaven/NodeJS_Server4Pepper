@@ -1,0 +1,36 @@
+canvas{
+    width:100%;
+    height:100%;
+}
+
+#dashboard-plot-view-wrapper {
+    min-height: 10rem;
+    width:100%;
+    font-size: 0px;
+    padding-bottom: 3rem;
+}
+
+.dashboard-plot-container-wrapper {
+    display: inline-block;
+    width: 100%;
+    height: 15rem;
+}
+
+.dashboard-plot-container-sm,
+.dashboard-plot-container-lg {
+    display: inherit;
+
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}
+
+.dashboard-plot-container-lg {
+    width:100%;
+    height:100%;
+}
+
+.dashboard-plot-container-sm {
+    width: 25%;
+    height: 100%;
+}

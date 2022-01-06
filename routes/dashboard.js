@@ -21,7 +21,6 @@ const {
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
  * * * -----> S E T U P <----- ----- ----- */
 
-
 var pool = mysql.createPool({
     connectionLimit: 10, // default = 10
     host: DB_HOST,
@@ -42,7 +41,8 @@ router.get('/docker-hbv-kms-http/dashboard', verifyToken, (req, res, next) => {
                 message: "Could not get data from database!"
             });
             else res.render("dashboard", {
-                title: "dashboard",
+                title: "Dashboard",
+                environment: (process.env.NODE_ENV === "PROD") ? "Production" : "Developement",
                 data: JSON.stringify(rows)
             });
         });

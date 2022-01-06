@@ -3,21 +3,19 @@
  * * * -----> I M P O R T S <----- ----- ----- */
 
 
-const mysql = require('mysql');
-const router = require("express").Router();
+const
+    router = require("express").Router(),
+    mysql = require('mysql'),
+    RSA_PRIVATE_KEY = require("fs").readFileSync(`${__dirname}/../../keys/id_rsa_priv.pem`),
+    JWT_EXPIRE_TIME_IN_S = 60 * 60 * 24 * 14; // 14 days
 
 var jwt = require("jsonwebtoken");
-
-const RSA_PRIVATE_KEY = require("fs").readFileSync(`${__dirname}/../../keys/id_rsa_priv.pem`);
-const JWT_EXPIRE_TIME_IN_S = 60 * 60 * 24 * 14 // 14 days
-
 
 const {
     generatePassword,
     validatePassword,
     generateHash
 } = require("../../lib/utils");
-require('dotenv').config()
 
 const {
     DB_HOST,
@@ -25,6 +23,8 @@ const {
     DB_PASSWORD,
     DB_NAME
 } = (process.env.NODE_ENV === "PROD") ? require("../../config").PRODUCTION: require("../../config").DEVELOPMENT;
+
+require('dotenv').config();
 
 /* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
@@ -79,7 +79,10 @@ pool.getConnection(function (err, con) {
  * * * -----> R O U T E S <----- ----- ----- */
 
 router.get("/docker-hbv-kms-http/login", (req, res, next) => {
-    res.render("login");
+    res.render("login", {
+        title: "Login",
+        environment: (process.env.NODE_ENV === "PROD") ? "Production" : "Developement",
+    });
 });
 
 router.post("/docker-hbv-kms-http/login", (req, res, next) => {

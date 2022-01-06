@@ -2,11 +2,10 @@
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
  * * * -----> I M P O R T S <----- ----- ----- */
 
-const router = require("express").Router();
-const https = require("https");
+const
+    router = require("express").Router(),
+    https = require("https");
 require('dotenv').config();
-
-
 
 /* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
@@ -15,7 +14,8 @@ require('dotenv').config();
 [
     "./dashboard", "./collector",
     "./mensa", "./timetable", "./dialog",
-    "./auth/login", "./auth/logout"
+    "./auth/login", "./auth/logout",
+    "./fileserver"
 ].forEach((elem) => {
     router.use(require(elem));
 });

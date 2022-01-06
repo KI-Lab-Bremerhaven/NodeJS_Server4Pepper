@@ -2,11 +2,11 @@
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
  * * * -----> I M P O R T S <----- ----- ----- */
 
-const express = require('express')
-const http = require("http");
-
-const cookieParser = require('cookie-parser')
-const path = require('path');
+const
+    express = require('express'),
+    http = require("http"),
+    path = require("path"),
+    cookieParser = require('cookie-parser');
 var routes = require("./routes");
 
 const {
@@ -28,21 +28,24 @@ app.use(cookieParser());
 app.set("view engine", "ejs");
 app.engine('ejs', require('ejs').__express);
 app.set('views', [
-    path.join(__dirname, 'views'),
+    `${__dirname}/views`, `${__dirname}/views/includes`
 ]);
 
+app.use("/static", express.static(path.join(__dirname, "static"))); // lokal geht das, aber auf dem hopper nicht, daher gibt es "routes/fileserver.js"
 app.use(routes);
-app.use(express.static(__dirname + "/public"));
 
 /* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
  * * * -----> R O U T E S <----- ----- ----- */
 
 app.get("/docker-hbv-kms-http/", (req, res) => {
-    res.render(""); // renders index.ejs
+    res.render("", {
+        environment: (process.env.NODE_ENV === "PROD") ? "Production" : "Developement",
+    });
 });
 
 
+// -- muss zum Schluss
 function errorHandler(req, res, next) {
     res.status(404).end();
 }

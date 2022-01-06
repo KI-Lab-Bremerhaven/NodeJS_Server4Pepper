@@ -1,8 +1,12 @@
   
 <%- include("header.ejs" ) %>
+    <title><% if (typeof title !== "undefined" && title) { %> <%= title %> <% } %></title>
+    <link rel="stylesheet" type="text/css" href=<%if (environment === "Production") { %> "/docker-hbv-kms-http/fileserver?name=dashboard.styles.css" <% } else { %> "/docker-hbv-kms-http/fileserver?name=dashboard.styles.css" <% } %>>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.3.1/dist/chart.min.js"></script>
+    <span id="environment" style="display: none"><%= environment %></span
   </head>
   <body>
-    <%- include("navbar/navbar.ejs") %>
+    <%- include("navbar.ejs") %>
 
     <div class="container mt-5">
       <h1>Admin Dashboard</h1>
@@ -10,6 +14,34 @@
 
     <% if (typeof data !== "undefined" && data && JSON.parse(data).length > 0) { %>
       <% const dataset = JSON.parse(data) %>
+      <% if (JSON.parse(data).length > 20) { %>
+        <script src=<%if (environment === "Production") { %> "/docker-hbv-kms-http/fileserver?name=dashboard.chartjs.js" <% } else { %> "/docker-hbv-kms-http/fileserver?name=dashboard.chartjs.js" <% } %>></script>
+        <div class="container" id="dashboard-plot-view-wrapper">
+          <div class="dashboard-plot-container-wrapper">
+            <div class="dashboard-plot-container-lg">
+              <canvas id="dashboard-plot-canvas-1" class="canvas"></canvas>
+            </div>
+          </div>
+          <div class="dashboard-plot-container-wrapper">
+            <div class="dashboard-plot-container-sm">
+              <canvas id="dashboard-plot-canvas-2" class="canvas"></canvas>
+            </div>
+            
+            <div class="dashboard-plot-container-sm">
+              <canvas id="dashboard-plot-canvas-3" class="canvas"></canvas>
+            </div>
+            
+            <div class="dashboard-plot-container-sm">
+              <canvas id="dashboard-plot-canvas-4" class="canvas"></canvas>
+            </div>
+
+            <div class="dashboard-plot-container-sm">
+              <canvas id="dashboard-plot-canvas-5" class="canvas"></canvas>
+            </div>
+          </div>          
+        </div>
+      <% } %>
+
       <div class="container">
         <table class="table table-hover table-striped">
           <thead>
@@ -28,7 +60,7 @@
           </thead>
           <tbody>
           <% for(let i = 0; i < dataset.length; i++) { %>
-            <% data= dataset[i] %>
+            <% data = dataset[i] %>
             <tr>
               <th scope="row"><%=i+1%></th>
               <td><%= data["distance"] %></td>
