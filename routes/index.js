@@ -1,3 +1,13 @@
+/**
+ * This router imports all other router and exports them.
+ * This Router must be inclueded in the server.js
+ * 
+ * @version 1.0
+ * @author Benjamin Thomas Schwertfeger
+ * @email development@b-schwertfeger.de
+ * @github https://github.com/ProjectPepperHSB/NodeJS_Server4Pepper
+ **/
+
 /* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
  * * * -----> I M P O R T S <----- ----- ----- */
@@ -23,6 +33,12 @@ require('dotenv').config();
 /* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
  * * * -----> R O U T E S <----- ----- ----- */
+
+router.get("/docker-hbv-kms-http/ip", (req, res, next) => {
+    res.status(200).json({
+        ip: req.headers['x-forwarded-for'] || req.socket.remoteAddress
+    })
+});
 
 // http://localhost:3000/crypto?subject=price&symbol=BTC-USDT <- for testing only
 router.get("/docker-hbv-kms-http/crypto", (req, res, next) => {

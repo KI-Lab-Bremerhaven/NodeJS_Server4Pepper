@@ -3,7 +3,7 @@
     <title><% if (typeof title !== "undefined" && title) { %> <%= title %> <% } %></title>
     <link rel="stylesheet" type="text/css" href=<%if (environment === "Production") { %> "/docker-hbv-kms-http/fileserver?name=dashboard.styles.css" <% } else { %> "/docker-hbv-kms-http/fileserver?name=dashboard.styles.css" <% } %>>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.3.1/dist/chart.min.js"></script>
-    <span id="environment" style="display: none"><%= environment %></span
+    <span id="environment" style="display: none"><%= environment %></span>
   </head>
   <body>
     <%- include("navbar.ejs") %>

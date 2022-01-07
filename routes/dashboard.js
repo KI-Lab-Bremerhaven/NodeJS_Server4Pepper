@@ -1,3 +1,12 @@
+/**
+ * This routes handles the Admin Dashboard. It connects to the database and renders the view.
+ * 
+ * @version 1.0
+ * @author Benjamin Thomas Schwertfeger
+ * @email development@b-schwertfeger.de
+ * @github https://github.com/ProjectPepperHSB/NodeJS_Server4Pepper
+ */
+
 /* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
  * * * -----> I M P O R T S <----- ----- ----- */

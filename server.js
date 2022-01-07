@@ -1,3 +1,15 @@
+/**
+ * This file is the entry point of this Express Server.
+ * It includes setups, configs and router.
+ * 
+ * Run by: node server.js
+ * 
+ *  @version: 1.0.0
+ *  @author: Benjamin Thomas Schwertfeger (2022)
+ *  @email development@b-schwertfeger.de
+ *  @github https://github.com/ProjectPepperHSB/NodeJS_Server4Pepper
+ **/
+
 /* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
  * * * -----> I M P O R T S <----- ----- ----- */
@@ -6,8 +18,8 @@ const
     express = require('express'),
     http = require("http"),
     path = require("path"),
-    cookieParser = require('cookie-parser');
-var routes = require("./routes");
+    cookieParser = require('cookie-parser'),
+    routes = require("./routes");
 
 const {
     PORT,
@@ -44,8 +56,7 @@ app.get("/docker-hbv-kms-http/", (req, res) => {
     });
 });
 
-
-// -- muss zum Schluss
+// must be at the end
 function errorHandler(req, res, next) {
     res.status(404).end();
 }

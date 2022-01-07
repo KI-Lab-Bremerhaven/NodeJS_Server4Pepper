@@ -1,7 +1,24 @@
-const jwt = require("jsonwebtoken");
-const fs = require("fs");
+/**
+ * This middleware is used to verify the user by checking the JWT
+ * 
+ *  @version: 1.0.0
+ *  @author: Benjamin Thomas Schwertfeger (2022)
+ *  @email development@b-schwertfeger.de
+ *  @github https://github.com/ProjectPepperHSB/NodeJS_Server4Pepper
+ **/
+
+/* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
+ * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
+ * * * -----> I M P O R T S <----- ----- ----- */
+
+const jwt = require("jsonwebtoken"),
+    fs = require("fs");
 
 const RSA_PUBLIC_KEY = fs.readFileSync(__dirname + "/../keys/id_rsa_priv.pem");
+
+/* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
+ * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
+ * * * -----> E X P O R T S <----- ----- ----- */
 
 module.exports.verifyToken = (req, res, next) => {
     let token = req.cookies["x-access-token"]
@@ -9,7 +26,6 @@ module.exports.verifyToken = (req, res, next) => {
     // return res.status(403).send({
     //     message: "No token provided!"
     // });
-
 
     jwt.verify(token, RSA_PUBLIC_KEY, {
         algorithms: ["RS256"]
@@ -23,3 +39,7 @@ module.exports.verifyToken = (req, res, next) => {
         next();
     });
 };
+
+/* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
+ * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
+ * * * -----> E O F <----- ----- ----- */

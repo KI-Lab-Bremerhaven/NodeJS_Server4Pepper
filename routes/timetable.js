@@ -1,6 +1,15 @@
+/**
+ * This endpoints fetching timetable related data and return them as response.
+ * 
+ * @version 1.0
+ * @author Benjamin Thomas Schwertfeger
+ * @email development@b-schwertfeger.de
+ * @github https://github.com/ProjectPepperHSB/NodeJS_Server4Pepper
+ * /
+
 /* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
- * * * -----> IMPORTS <----- ----- ----- */
+ * * * -----> I M P O R T S <----- ----- ----- */
 
 const router = require("express").Router();
 const jsdom = require('jsdom');
@@ -14,18 +23,7 @@ const {
 
 /* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
- * * * -----> F U N C T I O N S <----- ----- ----- */
-
-
-/* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
- * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
  * * * -----> R O U E T S <----- ----- ----- */
-
-router.get("/docker-hbv-kms-http/ip", (req, res, next) => {
-    res.status(200).json({
-        ip: req.headers['x-forwarded-for'] || req.socket.remoteAddress
-    })
-});
 
 router.get("/docker-hbv-kms-http/timetable", (req, res, next) => {
 
@@ -60,10 +58,11 @@ router.get("/docker-hbv-kms-http/timetable", (req, res, next) => {
             course_name = (semester) ? `${course}_B${semester}` : null;
 
         try {
+            const host = "www4.hs-bremerhaven.de";
             // get the courseId's
             myRequests(
                 data_to_send = {},
-                host = "www4.hs-bremerhaven.de",
+                host = host,
                 endpoint = "/fb2/ws2122.php?action=showfb&fb=%23SPLUS938DBF",
                 method = "GET",
                 callback = (response) => {
@@ -104,7 +103,7 @@ router.get("/docker-hbv-kms-http/timetable", (req, res, next) => {
                         // J A - DAS HIER IST NICHT SHÖN
                         // --> aber es sind asynchrone dinger, die alle passieren müssen und die route kann sonst nicht asynchron gestaltet werden
                         myRequests(data_to_send = {},
-                            host = "www4.hs-bremerhaven.de",
+                            host = host,
                             endpoint = getEndpoint(0, custom_course_id),
                             method = "GET",
                             callback = (response) => {
@@ -120,7 +119,7 @@ router.get("/docker-hbv-kms-http/timetable", (req, res, next) => {
 
                                     if (custom_course_id) res.status(200).json(timetable).end();
                                     else if (course_ids.length > 1) myRequests(data_to_send = {},
-                                        host = "www4.hs-bremerhaven.de",
+                                        host = host,
                                         endpoint = getEndpoint(1),
                                         method = "GET",
                                         callback = (response) => {
@@ -130,7 +129,7 @@ router.get("/docker-hbv-kms-http/timetable", (req, res, next) => {
                                                 timetable = uptdateTimeTable(timetable, new JSDOM(response));
 
                                                 if (course_ids.length > 2) myRequests(data_to_send = {},
-                                                    host = "www4.hs-bremerhaven.de",
+                                                    host = host,
                                                     endpoint = getEndpoint(2),
                                                     method = "GET",
                                                     callback = (response) => {
@@ -139,7 +138,7 @@ router.get("/docker-hbv-kms-http/timetable", (req, res, next) => {
                                                             timetable = uptdateTimeTable(timetable, new JSDOM(response));
 
                                                             if (course_ids.length > 3) myRequests(data_to_send = {},
-                                                                host = "www4.hs-bremerhaven.de",
+                                                                host = host,
                                                                 endpoint = getEndpoint(3),
                                                                 method = "GET",
                                                                 callback = (response) => {
@@ -148,7 +147,7 @@ router.get("/docker-hbv-kms-http/timetable", (req, res, next) => {
                                                                         timetable = uptdateTimeTable(timetable, new JSDOM(response));
 
                                                                         if (course_ids.length > 4) myRequests(data_to_send = {},
-                                                                            host = "www4.hs-bremerhaven.de",
+                                                                            host = host,
                                                                             endpoint = getEndpoint(4),
                                                                             method = "GET",
                                                                             callback = (response) => {

@@ -2,11 +2,12 @@
  * This script loads collected conversation data from the backend database via AJAX
  * and created Plots to visualize Distributoins.
  *     (Route: /docker-hbv-kms/dashboard)
-    
-*    @version: 1.0.0
-*    @author: Benjamin Thomas Schwertfeger (2022)
-*    @github: https://github.com/ProjectPepperHSB/NodeJS_Server4Pepper
-*/
+ * 
+ *  @version: 1.0.0
+ *  @author: Benjamin Thomas Schwertfeger (2022)
+ *  @email development@b-schwertfeger.de
+ *  @github: https://github.com/ProjectPepperHSB/NodeJS_Server4Pepper
+ **/
 
 /* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
@@ -126,7 +127,8 @@ const
     };
 
 $(document).ready(() => {
-    const url = ($("#environment").html() === "Production") ? "https://informatik.hs-bremerhaven.de/docker-hbv-kms-http/getData" : "http://localhost:3000/docker-hbv-kms-http/getData";
+    let url = ($("#environment").html() === "Production") ? "https://informatik.hs-bremerhaven.de/docker-hbv-kms-http/getData" : "http://localhost:3000/docker-hbv-kms-http/getData";
+    url += "?n=250";
     $.ajax({
         url: url,
         type: "GET",
