@@ -41,7 +41,7 @@ router.get("/docker-hbv-kms-http/timetable", (req, res, next) => {
         const
             course = query.course.toUpperCase(),
             kw = (typeof query.kw !== "undefined" && query.kw) ? query.kw : 48;
-        var
+        let
             semester = null,
             timetable = {
                 "Mo": [],

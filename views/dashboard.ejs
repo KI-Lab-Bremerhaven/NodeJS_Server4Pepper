@@ -1,14 +1,20 @@
   
 <%- include("header.ejs" ) %>
     <title><% if (typeof title !== "undefined" && title) { %> <%= title %> <% } %></title>
-    <link rel="stylesheet" type="text/css" href=<%if (environment === "Production") { %> "/docker-hbv-kms-http/fileserver?name=dashboard.styles.css" <% } else { %> "/docker-hbv-kms-http/fileserver?name=dashboard.styles.css" <% } %>>
+    <link rel="stylesheet" type="text/css" href=<%if (environment === "PROD") { %> "/docker-hbv-kms-http/fileserver?name=dashboard.styles.css" <% } else { %> "/docker-hbv-kms-http/fileserver?name=dashboard.styles.css" <% } %>>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.3.1/dist/chart.min.js"></script>
     <span id="environment" style="display: none"><%= environment %></span>
   </head>
   <body>
     <%- include("navbar.ejs") %>
+  
 
     <div class="container mt-5">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+        </ol>
+      </nav>
       <h1>Admin Dashboard</h1>
     </div>      
 
@@ -38,7 +44,7 @@
             <div class="dashboard-plot-container-sm">
               <canvas id="dashboard-plot-canvas-5" class="canvas"></canvas>
             </div>
-          </div>          
+          </div>    
         </div>
       <% } %>
 
@@ -47,33 +53,34 @@
           <thead>
             <tr>
               <th scope="col">#</th>
-              <th scope="col">distance</th>
-              <th scope="col">age</th>
-              <th scope="col">gender</th>
-              <th scope="col">basic emotion</th>
-              <th scope="col">pleasure state</th>
-              <th scope="col">excitement state</th>
-              <th scope="col">smile state</th>
-              <th scope="col">dialog time</th>
-              <th scope="col">timestamp</th>
+              <th scope="col">Distance</th>
+              <th scope="col">Age</th>
+              <th scope="col">Gender</th>
+              <th scope="col">Basic Emotion</th>
+              <th scope="col">Pleasure State</th>
+              <th scope="col">Excitement State</th>
+              <th scope="col">Smile State</th>
+              <th scope="col">Dialog Time</th>
+              <th scope="col">TimeStamp</th>
             </tr>
           </thead>
           <tbody>
           <% for(let i = 0; i < dataset.length; i++) { %>
-            <% data = dataset[i] %>
-            <tr>
+          <% data = dataset[i] %>
+            <tr class="clickable-row" onclick=window.location=<%=`"/docker-hbv-kms-http/dashboard/view?conversation_id=${data['identifier'].toString()}"` %>>
               <th scope="row"><%=i+1%></th>
-              <td><%= data["distance"] %></td>
+              <td><%= `${data["distance"]} meters` %></td>
               <td><%= data["age"] %></td>
               <td><%= data["gender"] %></td>
               <td><%= data["basic_emotion"] %></td>
               <td><%= data["pleasure_state"] %></td>
               <td><%= data["excitement_state"] %></td>
               <td><%= data["smile_state"] %></td>
-              <td><%= data["dialog_time"] %></td>
+              <td><%= `${Math.floor(data["dialog_time"])}m ${parseInt((data["dialog_time"]%1)*60)}s` %></td>
               <td><%= data["ts"] %></td>
             </tr>
           <% } %>
+
           </tbody>
         </table>
       </div>

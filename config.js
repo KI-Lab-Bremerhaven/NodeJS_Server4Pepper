@@ -17,3 +17,10 @@ module.exports.PRODUCTION = {
     DB_PASSWORD: process.env.DB_PASSWORD,
     DB_NAME: process.env.DB_NAME
 };
+
+module.exports.TABLES = {
+    emotion_table_name: "pepper_emotion_table",
+    conversation_table_name: "pepper_conversation_table",
+    use_case_table_name: "pepper_use_case_table",
+    not_understand_table_name: "pepper_did_not_understand_table"
+}

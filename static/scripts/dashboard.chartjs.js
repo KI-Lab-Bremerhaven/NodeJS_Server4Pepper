@@ -127,10 +127,9 @@ const
     };
 
 $(document).ready(() => {
-    let url = ($("#environment").html() === "Production") ? "https://informatik.hs-bremerhaven.de/docker-hbv-kms-http/getData" : "http://localhost:3000/docker-hbv-kms-http/getData";
-    url += "?n=250";
+    const url = ($("#environment").html() === "PROD") ? "https://informatik.hs-bremerhaven.de/docker-hbv-kms-http/getData" : "http://localhost:3000/docker-hbv-kms-http/getData";
     $.ajax({
-        url: url,
+        url: `${url}?n=250`,
         type: "GET",
         dataType: "json",
         success: function (data) {

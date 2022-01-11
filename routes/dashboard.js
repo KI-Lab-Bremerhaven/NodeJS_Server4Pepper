@@ -26,6 +26,13 @@ const {
     verifyToken
 } = require("../middleware/auth")
 
+const {
+    emotion_table_name,
+    conversation_table_name,
+    use_case_table_name,
+    not_understand_table_name
+} = require("../config").TABLES;
+
 /* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
  * * * -----> S E T U P <----- ----- ----- */
@@ -44,19 +51,60 @@ var pool = mysql.createPool({
 
 // only if logged in
 router.get('/docker-hbv-kms-http/dashboard', verifyToken, (req, res, next) => {
-    pool.getConnection(function (err, con) {
-        con.query("SELECT * FROM pepper_data ORDER BY ts DESC LIMIT 250", function (err, rows) {
+    pool.getConnection((err, con) => {
+        con.query(`SELECT * FROM ${emotion_table_name} ORDER BY ts DESC LIMIT 250`, (err, data_rows) => {
             if (err) res.json({
                 message: "Could not get data from database!"
             });
             else res.render("dashboard", {
                 title: "Dashboard",
-                environment: (process.env.NODE_ENV === "PROD") ? "Production" : "Developement",
-                data: JSON.stringify(rows)
+                environment: process.env.NODE_ENV,
+                data: JSON.stringify(data_rows),
             });
         });
     });
 });
+
+
+router.get('/docker-hbv-kms-http/dashboard/view', verifyToken, (req, res, next) => {
+    const
+        conversation_id = req.query.conversation_id,
+        db_err_msg = "Could not get data from database!";
+    pool.getConnection((err, con) => {
+        con.query(`SELECT distance, age, gender, basic_emotion, pleasure_state, excitement_state, smile_state, dialog_time, ts FROM ${emotion_table_name} WHERE identifier ="${conversation_id}"`, (err, emotion_data) => {
+            if (err) res.json({
+                message: db_err_msg
+            });
+            else if (emotion_data.length === 0) res.status(404).end();
+            else con.query(`SELECT data FROM ${conversation_table_name} WHERE identifier = "${conversation_id}"`, (err, general_data) => {
+                if (err) res.json({
+                    message: db_err_msg
+                });
+                else con.query(`SELECT use_case, ts FROM ${use_case_table_name} WHERE identifier = "${conversation_id}"`, (err, use_case_data) => {
+                    if (err) res.json({
+                        message: db_err_msg
+                    });
+                    else con.query(`SELECT phrase, ts FROM ${not_understand_table_name} WHERE identifier = "${conversation_id}"`, (err, did_not_understand_data) => {
+                        con.release();
+                        if (err) res.json({
+                            message: db_err_msg
+                        });
+                        else res.render("detailView", {
+                            title: `View ${conversation_id}`,
+                            environment: process.env.NODE_ENV,
+                            conversation_id: conversation_id,
+                            emotion_data: emotion_data[0],
+                            use_case_data: use_case_data,
+                            general_data: (general_data.length !== 0) ? general_data[0].data : null,
+                            did_not_understand_data: did_not_understand_data
+                        });
+                    });
+                });
+            });
+        });
+    });
+});
+
 
 /* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 

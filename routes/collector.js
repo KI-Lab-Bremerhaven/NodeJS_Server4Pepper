@@ -12,7 +12,6 @@
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
  * * * -----> I M P O R T S <----- ----- ----- */
 
-
 const mysql = require('mysql');
 const {
     verifyToken
@@ -27,18 +26,26 @@ const {
     DB_NAME
 } = (process.env.NODE_ENV === "PROD") ? require("./../config").PRODUCTION: require("../config").DEVELOPMENT;
 
+const {
+    emotion_table_name,
+    conversation_table_name,
+    use_case_table_name,
+    not_understand_table_name
+} = require("../config").TABLES;
 
 /* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
  * * * -----> S E T U P <----- ----- ----- */
 
-const dirty_sql_words = [
-    "select", "delete", "from", "where",
-    "order", "by", "desc", "asc", "join", "shift",
-    "primary", "key", "secondary", "null", "auto_increment",
-    "drop", "table", "create",
-    "\\", ".", "..", "*", "$", "/", "//", "'", "\""
-];
+const
+    dirty_sql_words = [
+        "select", "delete", "from", "where",
+        "order", "by", "desc", "asc", "join", "shift",
+        "primary", "key", "secondary", "null", "auto_increment",
+        "drop", "table", "create",
+        "\\", ".", "..", "*", "$", "/", "//", "'", "\""
+    ],
+    unknown = "UNKNOWN";
 
 var pool = mysql.createPool({
     connectionLimit: 10, // default = 10
@@ -47,13 +54,6 @@ var pool = mysql.createPool({
     password: DB_PASSWORD,
     database: DB_NAME
 });
-
-const
-    emotion_table_name = "pepper_emotion_data_table",
-    conversation_table_name = "pepper_conversation_data",
-    use_case_table_name = "pepper_use_case_table",
-    not_understand_table_name = "pepper_did_not_understand_table";
-
 
 // this initializes the table where we want to store the data
 pool.getConnection(function (err, con) {
@@ -75,10 +75,9 @@ pool.getConnection(function (err, con) {
             //else console.log(`Table ${conversation_table_name} created`);
         });
 
-
         // USE CASE TABLE
         sql = `CREATE TABLE IF NOT EXISTS ${use_case_table_name} (data_id INT NOT NULL AUTO_INCREMENT, `;
-        sql += "use_case VARCHAR(128),  identifier VARCHAR(128), ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, PRIMARY KEY (data_id))";
+        sql += "identifier VARCHAR(128), use_case VARCHAR(128), ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, PRIMARY KEY (data_id))";
         con.query(sql, function (err, result) {
             if (err) throw err;
             //else console.log(`Table ${use_case_table_name} created`);
@@ -86,7 +85,7 @@ pool.getConnection(function (err, con) {
 
         // DID NOT UNDERSTAND PHRASES TABLE
         sql = `CREATE TABLE IF NOT EXISTS ${not_understand_table_name} (data_id INT NOT NULL AUTO_INCREMENT, `;
-        sql += "phrase VARCHAR(1024), identifier VARCHAR(128), ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, PRIMARY KEY (data_id))";
+        sql += "identifier VARCHAR(128), phrase VARCHAR(1024), ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, PRIMARY KEY (data_id))";
         con.query(sql, function (err, result) {
             if (err) throw err;
             //else console.log(`Table ${not_understand_table_name} created`);
@@ -104,64 +103,56 @@ router.post("/docker-hbv-kms-http/collector", (req, res, nect) => {
     let
         identifier = body.identifier,
         data = body.data;
-    const
-        subject = body.subject,
-        unknown = "UNKNOWN";
+    const subject = body.subject;
 
     if (!(body && typeof subject !== "undefined" && subject)) res.status(404).end();
-    else if (!(typeof data !== "undefined" && data)) res.json({
+    else if (!(typeof data !== "undefined" && data)) res.status(401).json({
         message: "No data provided!"
     }).end();
     else if (!(typeof identifier !== "undefined" && identifier)) identifier = unknown;
-    else if (subject === "conversation_content") {
+    else if (subject === "conversation_data") {
 
-        // hier müsste man prüfen, ob nicht doch sql befehle dabei sind, damit niemand das auslesen kann
+        // hier müsste man prüfen, ob nicht doch SQL Befehle dabei sind, damit niemand unsere DB manipulieren kann
         // jedoch würde dadruch auch der json string kaputt gehen
-        // man sollte stattdessen versuchen, dem pepper auch ein doken zu geben, welches er bei jeder anfrage übermittelt,
-        // damit nur er daten schreiben kann
+        // Mman sollte stattdessen versuchen, dem pepper auch ein Token zu geben, welches er bei jeder Anfrage übermittelt,
+        // damit nur er Daten schreiben (und nicht lesen) kann
 
         try {
-            const _ = JSON.parse(JSON.stringify(data));
-
-            pool.getConnection(function (err, con) {
+            const _ = JSON.parse(data); // test 
+            pool.getConnection((err, con) => {
                 if (err) res.json({
                     message: "Error while connecting to Database"
                 }).end();
                 else {
-                    const json_str = JSON.stringify(data);
-                    const sql = `INSERT INTO ${conversation_table_name} (identifier, data) VALUES ('${identifier.toString()}', '${json_str}')`;
-                    con.query(sql, function (err, result) {
+                    const sql = `INSERT INTO ${conversation_table_name} (identifier, data) VALUES ('${identifier.toString()}', '${data}')`;
+                    con.query(sql, (err, result) => {
                         con.release();
-                        if (err) res.json({
+                        if (err) res.status(500).json({
                             message: "Could not save data to database!"
                         });
                         else res.status(200).end();
                     });
                 }
             });
-
         } catch (err) {
-            res.json({
+            res.status(401).json({
                 message: "Data should be a valid object in format JSON"
             }).end();
         }
 
-
     } else res.json({
         message: "Subject not found!"
     }).end();
-
 });
 
 router.get("/docker-hbv-kms-http/collector", (req, res, next) => {
-    // e.g.: https://informatik.hs-bremerhaven.de/docker-hbv-kms-http/collector?subject=save_pepper_data&identifier=somehash&distance=1&age=29&gender=male&basic_emotion=good&pleasure_state=perfect&excitement_state=excited&smile_state=true&dialog_time=20
     let query = req.query;
-    const
-        subject = query.subject,
-        unknown = "UNKNOWN";
+    const subject = query.subject;
 
     if (!(query && typeof subject !== "undefined" && subject)) res.status(404).end();
-    else if (subject === "save_pepper_data") {
+    else if (subject === "emotion_data") {
+        // e.g.: https://informatik.hs-bremerhaven.de/docker-hbv-kms-http/collector?subject=save_pepper_data&identifier=somehash&distance=1&age=29&gender=male&basic_emotion=good&pleasure_state=perfect&excitement_state=excited&smile_state=true&dialog_time=20
+
         if (!(typeof query.identifier !== "undefined" && query.identifier)) query.identifier = unknown;
         if (!(typeof query.distance !== "undefined" && query.distance)) query.distance = unknown;
         if (!(typeof query.age !== "undefined" && query.age)) query.age = unknown;
@@ -192,7 +183,7 @@ router.get("/docker-hbv-kms-http/collector", (req, res, next) => {
             message: "Invalid parameter!"
         }).end();
 
-        pool.getConnection(function (err, con) {
+        pool.getConnection((err, con) => {
             if (err) res.json({
                 message: "Error while connecting to Database"
             }).end();
@@ -201,7 +192,7 @@ router.get("/docker-hbv-kms-http/collector", (req, res, next) => {
                 sql += `('${identifier.toString()}', '${distance.toString()}', '${age.toString()}', '${gender.toString()}', '${basic_emotion.toString()}', `
                 sql += `'${pleasure_state.toString()}', '${excitement_state.toString()}', '${smile_state.toString()}', '${dialog_time.toString()}')`;
 
-                con.query(sql, function (err, result) {
+                con.query(sql, (err, result) => {
                     con.release();
                     if (err) throw err;
                     else res.status(200).end();
@@ -209,7 +200,7 @@ router.get("/docker-hbv-kms-http/collector", (req, res, next) => {
             }
         });
 
-    } else if (subject === "save_use_case_counter") {
+    } else if (subject === "use_case_data") {
         // e.g.: https://informatik.hs-bremerhaven.de/docker-hbv-kms-http/collector?subject=save_use_case_counter&identifier=somenicehash&use_case=Mensaplan
         if (!(typeof query.identifier !== "undefined" && query.identifier)) query.identifier = unknown;
         if (!(typeof query.use_case !== "undefined" && query.use_case)) query.use_case = unknown;
@@ -222,13 +213,13 @@ router.get("/docker-hbv-kms-http/collector", (req, res, next) => {
             message: "Invalid parameter!"
         }).end();
 
-        pool.getConnection(function (err, con) {
+        pool.getConnection((err, con) => {
             if (err) res.json({
                 message: "Error while connecting to Database"
             }).end();
             else {
-                const sql = `INSERT INTO ${use_case_table_name} (use_case, identifier) VALUES ('${use_case.toString()}', '${identifier.toString()}')`; // ON DUPLICATE KEY UPDATE count = count + 1`;
-                con.query(sql, function (err, result) {
+                const sql = `INSERT INTO ${use_case_table_name} (identifier, use_case) VALUES ("${identifier.toString()}", "${use_case.toString()}")`; // ON DUPLICATE KEY UPDATE count = count + 1`;
+                con.query(sql, (err, result) => {
                     con.release();
                     if (err) res.json({
                         message: "Could not save data to database!"
@@ -238,7 +229,7 @@ router.get("/docker-hbv-kms-http/collector", (req, res, next) => {
             }
         });
 
-    } else if (subject === "save_not_understand") {
+    } else if (subject === "did_not_understand_data") {
         // e.g.: https://informatik.hs-bremerhaven.de/docker-hbv-kms-http/collector?subject=save_not_understand&identifier=somenicehash&phrase=blabla
         if (!(typeof query.identifier !== "undefined" && query.identifier)) query.identifier = unknown;
         if (!(typeof query.phrase !== "undefined" && query.phrase)) query.phrase = unknown;
@@ -251,13 +242,13 @@ router.get("/docker-hbv-kms-http/collector", (req, res, next) => {
             message: "Invalid parameter!"
         }).end();
 
-        pool.getConnection(function (err, con) {
+        pool.getConnection((err, con) => {
             if (err) res.json({
                 message: "Error while connecting to Database"
             }).end();
             else {
-                const sql = `INSERT INTO ${not_understand_table_name} (phrase, identifier) VALUES ('${phrase.toString()}', '${identifier.toString()}')`; // ON DUPLICATE KEY UPDATE count = count + 1`;
-                con.query(sql, function (err, result) {
+                const sql = `INSERT INTO ${not_understand_table_name} (identifier, phrase) VALUES ('${identifier.toString()}', '${phrase.toString()}')`; // ON DUPLICATE KEY UPDATE count = count + 1`;
+                con.query(sql, (err, result) => {
                     con.release();
                     if (err) res.json({
                         message: "Could not save data to database!"
@@ -279,8 +270,8 @@ router.get("/docker-hbv-kms-http/getData", verifyToken, (req, res, next) => {
 
     if (typeof query.n !== "number") query_string = `LIMIT ${query.n}`
 
-    pool.getConnection(function (err, con) {
-        con.query(`SELECT * FROM ${emotion_table_name} ORDER BY ts DESC ${query_string}`, function (err, rows) {
+    pool.getConnection((err, con) => {
+        con.query(`SELECT * FROM ${emotion_table_name} ORDER BY ts DESC ${query_string}`, (err, rows) => {
             con.release()
             if (err) res.json({
                 message: "Could not load data from database!"

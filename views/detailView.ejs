@@ -1,0 +1,98 @@
+  
+<%- include("header.ejs" ) %>
+        <title><% if (typeof title !== "undefined" && title) { %> <%= title %> <% } %></title>
+        <link rel="stylesheet" type="text/css" href=<%if (environment === "PROD") { %> "/docker-hbv-kms-http/fileserver?name=dashboard.styles.css" <% } else { %> "/docker-hbv-kms-http/fileserver?name=dashboard.styles.css" <% } %>>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@3.3.1/dist/chart.min.js"></script>
+        <span id="environment" style="display: none"><%= environment %></span>
+  </head>
+  <body>
+    <%- include("navbar.ejs") %>
+
+    <% if (typeof emotion_data === "undefined") { %>
+        <script> window.location = "/docker-hbv-kms/dashboard"; </script>
+    <% } else { %>
+        <div class="container mt-5">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/docker-hbv-kms-http/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item active" aria-current="page"><% if (typeof conversation_id !== "undefined" && conversation_id) { %> <%= `View ${conversation_id}` %> <% } %></li>
+                </ol>
+            </nav>  
+            <h3><%= `Conversation: ${conversation_id}` %></h3>
+            <h5><%= emotion_data["ts"] %></h5>
+        </div>     
+
+        <div class="container mt-5">
+            <h4>General Data</h5>
+            <table class="table table-hover table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Distance</th>
+                    <th scope="col">Age</th>
+                    <th scope="col">Gender</th>
+                    <th scope="col">Basic Emotion</th>
+                    <th scope="col">Pleasure State</th>
+                    <th scope="col">Excitement State</th>
+                    <th scope="col">Smile State</th>
+                    <th scope="col">Dialog Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><%= `${emotion_data["distance"]} meters` %></td>
+                    <td><%= emotion_data["age"] %></td>
+                    <td><%= emotion_data["gender"] %></td>
+                    <td><%= emotion_data["basic_emotion"] %></td>
+                    <td><%= emotion_data["pleasure_state"] %></td>
+                    <td><%= emotion_data["excitement_state"] %></td>
+                    <td><%= emotion_data["smile_state"] %></td>
+                    <td><%= `${Math.floor(emotion_data["dialog_time"])}m ${parseInt((emotion_data["dialog_time"]%1)*60)}s` %></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <% if (use_case_data.length > 0 ) { %>
+        <div class="container mt-5">
+            <h4>Use-Case History</h2>
+            <table class="table table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Use Case</th>
+                        <th scope="col">Timestamp</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% use_case_data.forEach((element, index)=> { %>
+                    <tr>
+                        <td><%= index + 1 %></td>
+                        <td><%= element["use_case"] %></td>
+                        <td><%= element["ts"] %></td>
+                    </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+        <% } %> 
+
+        <% if (did_not_understand_data.length > 0) { %>
+        <div class="container mt-5">
+            <h4>Not understand phrases</h2>
+            
+            <% const not_understand = new Set([...new Array(did_not_understand_data.length)].map((elem,index)=>did_not_understand_data[index]["phrase"])); %>
+            <% not_understand.forEach((element) => { %>
+                <button type="button" class="btn btn-secondary" disabled><%= element %></button>
+            <% }); %>
+        </div>
+        <% } %> 
+
+        <% if (typeof JSON.parse(general_data) !== "undefined") { %>
+        <div class="container mt-5">
+            <%= general_data %>
+        </div>
+        <% } %>
+
+    <% } %>
+  </body>
+</html>
