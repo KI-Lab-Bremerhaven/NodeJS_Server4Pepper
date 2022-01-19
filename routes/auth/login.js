@@ -49,7 +49,7 @@ var pool = mysql.createPool({
 
 
 // this initializes the table where we want to store the data
-pool.getConnection(function (err, con) {
+pool.getConnection((err, con) => {
     if (err) throw err;
     // console.log("Connected!");
     var sql = "CREATE TABLE IF NOT EXISTS users (uid INT NOT NULL AUTO_INCREMENT, ";
@@ -68,7 +68,6 @@ pool.getConnection(function (err, con) {
                     const
                         hash = saltHash.hash,
                         salt = saltHash.salt;
-
 
                     sql = `INSERT INTO users (username, hash, salt) VALUES ('admin', '${hash}', '${salt}')`;
                     con.query(sql, function (err, result) {
@@ -97,7 +96,7 @@ router.post("/docker-hbv-kms-http/login", (req, res, next) => {
 
     if (!(typeof body.username_input !== "undefined" && body.username_input && typeof body.password_input !== "undefined" && body.password_input)) res.status(404).end();
     else {
-        pool.getConnection(function (err, con) {
+        pool.getConnection((err, con) => {
             if (err) throw err;
             var sql = `SELECT hash, salt FROM users WHERE username = '${body.username_input}'`;
             con.query(sql, function (err, result, field) {

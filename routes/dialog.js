@@ -9,18 +9,33 @@
 
 const
     router = require("express").Router(),
-    https = require("https");
+    fs = require("fs"),
+    path = require("path");
+// https = require("https");
 
 /* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
  * * * -----> R O U E T S <----- ----- ----- */
 
 router.get("/docker-hbv-kms-http/dialogtest", (req, res, next) => {
-    res.status(200).json({
-        sometext: "nothing happens"
-    })
-});
 
+    const query = req.query;
+
+    const
+        startraum = query.sraum,
+        endraum = query.sraum;
+    // video_{sraum}_{eraum}
+
+    const filepath = `300to400`;
+
+    // fs.readFileSync(path.join(__dirname, "..", "RouteVideos", ));
+
+    const myjson = {
+        "data": "lfbdsjk"
+    }
+
+    res.send(`<html><div id='content'>${JSON.stringify(myjson)}</div></html>`)
+});
 /* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
  * * * -----> E X P O R T S <----- ----- ----- */

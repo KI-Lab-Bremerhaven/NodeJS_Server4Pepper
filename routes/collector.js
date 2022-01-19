@@ -23,7 +23,8 @@ const {
     DB_HOST,
     DB_USER,
     DB_PASSWORD,
-    DB_NAME
+    DB_NAME,
+    API_KEY
 } = (process.env.NODE_ENV === "PROD") ? require("./../config").PRODUCTION: require("../config").DEVELOPMENT;
 
 const {
@@ -56,7 +57,7 @@ var pool = mysql.createPool({
 });
 
 // this initializes the table where we want to store the data
-pool.getConnection(function (err, con) {
+pool.getConnection((err, con) => {
     if (err) throw err;
     else {
         // EMOTION DATA + DIALOG TIME
@@ -281,6 +282,25 @@ router.get("/docker-hbv-kms-http/getData", verifyToken, (req, res, next) => {
     });
 })
 
+router.post("/docker-hbv-kms-http/api/v1", (req, res, next) => {
+    const body = req.body;
+    const auth_key = body.auth_key;
+
+    if (typeof auth_key === "undefined" || auth_key !== API_KEY) res.status(401).send("Invalid API KEY").end();
+    else if (typeof body.subject === "undefined" || !body.subject) res.status(400).send("Invalid or unknown subject!").end();
+    else if (body.subject === "sql_query" && typeof body.query_str !== "undefined" && body.query_str) {
+        const unwanted_actions = ["drop", "delete", "show", "users", "insert", "into", "create"];
+        if (unwanted_actions.some(v => body.query_str.includes(v.toLocaleLowerCase()))) res.status(401).send("Invalid SQL command!").end();
+        else pool.getConnection((err, con) => {
+            if (err) res.status(500).send(`${err}`).end();
+            con.query(body.query_str, (err, rows) => {
+                con.release()
+                if (err) res.status(500).send(`${err}`).end();
+                else res.status(200).json(rows);
+            });
+        });
+    } else next();
+});
 /* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
  * * * -----> E X P O R T <----- ----- ----- */
