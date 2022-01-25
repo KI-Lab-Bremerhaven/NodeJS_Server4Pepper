@@ -58,11 +58,11 @@ router.get("/docker-hbv-kms-http/timetable", (req, res, next) => {
             course_name = (semester) ? `${course}_B${semester}` : null;
 
         try {
-            const host = "www4.hs-bremerhaven.de";
+            const url = "www4.hs-bremerhaven.de";
             // get the courseId's
             myRequests(
                 data_to_send = {},
-                host = host,
+                host = url,
                 endpoint = "/fb2/ws2122.php?action=showfb&fb=%23SPLUS938DBF",
                 method = "GET",
                 callback = (response) => {
@@ -103,7 +103,7 @@ router.get("/docker-hbv-kms-http/timetable", (req, res, next) => {
                         // J A - DAS HIER IST NICHT SHÖN
                         // --> aber es sind asynchrone dinger, die alle passieren müssen und die route kann sonst nicht asynchron gestaltet werden
                         myRequests(data_to_send = {},
-                            host = host,
+                            host = url,
                             endpoint = getEndpoint(0, custom_course_id),
                             method = "GET",
                             callback = (response) => {
@@ -119,7 +119,7 @@ router.get("/docker-hbv-kms-http/timetable", (req, res, next) => {
 
                                     if (custom_course_id) res.status(200).json(timetable).end();
                                     else if (course_ids.length > 1) myRequests(data_to_send = {},
-                                        host = host,
+                                        host = url,
                                         endpoint = getEndpoint(1),
                                         method = "GET",
                                         callback = (response) => {
@@ -129,7 +129,7 @@ router.get("/docker-hbv-kms-http/timetable", (req, res, next) => {
                                                 timetable = uptdateTimeTable(timetable, new JSDOM(response));
 
                                                 if (course_ids.length > 2) myRequests(data_to_send = {},
-                                                    host = host,
+                                                    host = url,
                                                     endpoint = getEndpoint(2),
                                                     method = "GET",
                                                     callback = (response) => {
@@ -138,7 +138,7 @@ router.get("/docker-hbv-kms-http/timetable", (req, res, next) => {
                                                             timetable = uptdateTimeTable(timetable, new JSDOM(response));
 
                                                             if (course_ids.length > 3) myRequests(data_to_send = {},
-                                                                host = host,
+                                                                host = url,
                                                                 endpoint = getEndpoint(3),
                                                                 method = "GET",
                                                                 callback = (response) => {
@@ -147,7 +147,7 @@ router.get("/docker-hbv-kms-http/timetable", (req, res, next) => {
                                                                         timetable = uptdateTimeTable(timetable, new JSDOM(response));
 
                                                                         if (course_ids.length > 4) myRequests(data_to_send = {},
-                                                                            host = host,
+                                                                            host = url,
                                                                             endpoint = getEndpoint(4),
                                                                             method = "GET",
                                                                             callback = (response) => {
@@ -177,7 +177,7 @@ router.get("/docker-hbv-kms-http/timetable", (req, res, next) => {
                     }
                 });
         } catch (err) {
-            console.log(`some error: ${err.message}`);
+            console.log(`some error: ${err}`);
             res.status(500).json({
                 message: err.message
             }).end();

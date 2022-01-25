@@ -288,6 +288,9 @@ router.post("/docker-hbv-kms-http/api/v1", (req, res, next) => {
 
     if (typeof auth_key === "undefined" || auth_key !== API_KEY) res.status(401).send("Invalid API KEY").end();
     else if (typeof body.subject === "undefined" || !body.subject) res.status(400).send("Invalid or unknown subject!").end();
+    else if (body.subject === "test") res.status(200).json({
+        message: "Connected!"
+    }).end();
     else if (body.subject === "sql_query" && typeof body.query_str !== "undefined" && body.query_str) {
         const unwanted_actions = ["drop", "delete", "show", "users", "insert", "into", "create"];
         if (unwanted_actions.some(v => body.query_str.includes(v.toLocaleLowerCase()))) res.status(401).send("Invalid SQL command!").end();
