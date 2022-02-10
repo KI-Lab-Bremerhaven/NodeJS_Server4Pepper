@@ -16,15 +16,15 @@
 
 const
     express = require('express'),
-    http = require("http"),
-    path = require("path"),
+    http = require('http'),
+    path = require('path'),
     cookieParser = require('cookie-parser'),
-    routes = require("./routes");
+    routes = require('./routes');
 
 const {
     PORT,
     URL
-} = process.env.NODE_ENV == "PROD" ? require("./config").PRODUCTION : require("./config").DEVELOPMENT;
+} = process.env.NODE_ENV == 'PROD' ? require('./config').PRODUCTION : require('./config').DEVELOPMENT;
 
 /* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
@@ -37,26 +37,26 @@ app.use(express.urlencoded({
 }));
 
 app.use(cookieParser());
-app.set("view engine", "ejs");
+app.set('view engine', 'ejs');
 app.engine('ejs', require('ejs').__express);
 app.set('views', [
     `${__dirname}/views`, `${__dirname}/views/includes`
 ]);
 
-app.use("/static", express.static(path.join(__dirname, "static"))); // lokal geht das, aber auf dem hopper nicht, daher gibt es "routes/fileserver.js"
+app.use('/static', express.static(path.join(__dirname, 'static'))); // lokal geht das, aber auf dem hopper nicht, daher gibt es 'routes/fileserver.js'
 app.use(routes);
 
 /* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
  * * * -----> R O U T E S <----- ----- ----- */
 
-app.get("/docker-hbv-kms-http/", (req, res) => {
-    res.render("", {
-        environment: (process.env.NODE_ENV === "PROD") ? "Production" : "Developement",
+app.get('/docker-hbv-kms-http/', (req, res) => {
+    res.render('', {
+        environment: (process.env.NODE_ENV === 'PROD') ? 'Production' : 'Developement',
     });
 });
 
-// must be at the end
+// must be at the end to catch all incorrect requests
 function errorHandler(req, res, next) {
     res.status(404).end();
 }

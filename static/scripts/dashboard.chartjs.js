@@ -14,9 +14,9 @@
  * * * -----> S E T T I N G S <----- ----- ----- */
 
 const
-    FONT_FAMILY = "Helvetica Neue",
+    FONT_FAMILY = 'Helvetica Neue',
     configLine = {
-        type: "line",
+        type: 'line',
         data: {
             labels: null,
             datasets: null,
@@ -34,7 +34,7 @@ const
                     },
                 },
                 legend: {
-                    position: "top",
+                    position: 'top',
                     display: false,
                 },
                 tooltip: {
@@ -42,7 +42,7 @@ const
                     callbacks: {
                         labelPointStyle: function (context) {
                             return {
-                                pointStyle: "rectRot",
+                                pointStyle: 'rectRot',
                                 rotation: 0,
                             };
                         },
@@ -90,7 +90,7 @@ const
         },
     },
     configPie = {
-        type: "doughnut",
+        type: 'doughnut',
         data: {
             labels: null,
             datasets: null,
@@ -108,7 +108,7 @@ const
                     },
                 },
                 legend: {
-                    position: "top",
+                    position: 'top',
                     display: true,
                 },
                 tooltip: {
@@ -116,7 +116,7 @@ const
                     callbacks: {
                         labelPointStyle: function (context) {
                             return {
-                                pointStyle: "rectRot",
+                                pointStyle: 'rectRot',
                                 rotation: 0,
                             };
                         },
@@ -127,11 +127,11 @@ const
     };
 
 $(document).ready(() => {
-    const url = ($("#environment").html() === "PROD") ? "https://informatik.hs-bremerhaven.de/docker-hbv-kms-http/getData" : "http://localhost:3000/docker-hbv-kms-http/getData";
+    const url = ($('#environment').html() === 'PROD') ? 'https://informatik.hs-bremerhaven.de/docker-hbv-kms-http/getData' : 'http://localhost:3000/docker-hbv-kms-http/getData';
     $.ajax({
         url: `${url}?n=250`,
-        type: "GET",
-        dataType: "json",
+        type: 'GET',
+        dataType: 'json',
         success: function (data) {
             dialogTimePlot(data);
             pieCharts(data);
@@ -190,19 +190,19 @@ function dialogTimePlot(data) {
     const avgDialogTime = avg(dialogTimeData);
 
     const dialogTimeDataset = {
-            label: "Dialog Time",
+            label: 'Dialog Time',
             data: dialogTimeData,
             fill: false,
-            borderColor: "rgb(255, 0, 0)",
+            borderColor: 'rgb(255, 0, 0)',
             pointRadius: 0,
             tension: 0.2,
             borderWidth: 2
         },
         averageDialogTime = {
-            label: "Average Dialog Time",
+            label: 'Average Dialog Time',
             data: [...new Array(data.length)].map((e, i) => `${avgDialogTime}`),
             fill: false,
-            borderColor: "black",
+            borderColor: 'black',
             pointRadius: 0,
             borderDash: [10, 5],
             borderWidth: 1
@@ -215,14 +215,14 @@ function dialogTimePlot(data) {
 
     let config = JSON.parse(JSON.stringify(configLine));
 
-    config.type = "line";
+    config.type = 'line';
     config.data.labels = LABELS;
     config.data.datasets = [dialogTimeDataset, averageDialogTime];
-    config.options.plugins.title.text = "Dialog Time";
-    config.options.scales.x.title.text = "Conversation, Time";
-    config.options.scales.y.title.text = "time in minutes";
+    config.options.plugins.title.text = 'Dialog Time';
+    config.options.scales.x.title.text = 'Conversation, Time';
+    config.options.scales.y.title.text = 'time in minutes';
 
-    const ctx = $("#dashboard-plot-canvas-1");
+    const ctx = $('#dashboard-plot-canvas-1');
     window.dashboard_plot_1 = new Chart(ctx, config);
 }
 
@@ -278,51 +278,51 @@ function pieCharts(data) {
     let configGenderPie = JSON.parse(JSON.stringify(configPie));
     configGenderPie.data.labels = uniqueGender;
     configGenderPie.data.datasets = [{
-        label: "Gender Distribution",
+        label: 'Gender Distribution',
         data: genderCounts,
         backgroundColor: poolColors(uniqueGender.length),
         hoverOffset: 4
     }];
-    configGenderPie.options.plugins.title.text = "Gender Distribution";
-    const ctxGender = $("#dashboard-plot-canvas-2");
+    configGenderPie.options.plugins.title.text = 'Gender Distribution';
+    const ctxGender = $('#dashboard-plot-canvas-2');
     window.dashboard_plot_2 = new Chart(ctxGender, configGenderPie);
 
     // ----- E M O T I O N - S T U F F
     let configEmotionPie = JSON.parse(JSON.stringify(configPie));
     configEmotionPie.data.labels = uniqueBasicEmotions;
     configEmotionPie.data.datasets = [{
-        label: "Basic Emotion",
+        label: 'Basic Emotion',
         data: basicEmotionCounts,
         backgroundColor: poolColors(uniqueBasicEmotions.length),
         hoverOffset: 4
     }];
-    configEmotionPie.options.plugins.title.text = "Basic Emotion";
-    const ctxEmotion = $("#dashboard-plot-canvas-3");
+    configEmotionPie.options.plugins.title.text = 'Basic Emotion';
+    const ctxEmotion = $('#dashboard-plot-canvas-3');
     window.dashboard_plot_3 = new Chart(ctxEmotion, configEmotionPie);
 
     // ----- P L E A S U R E - S T U F F
     let configPleasurePie = JSON.parse(JSON.stringify(configPie));
     configPleasurePie.data.labels = uniquePleasureData;
     configPleasurePie.data.datasets = [{
-        label: "Pleasure State",
+        label: 'Pleasure State',
         data: pleasureCounts,
         backgroundColor: poolColors(uniquePleasureData.length),
         hoverOffset: 4
     }];
-    configPleasurePie.options.plugins.title.text = "Pleasure State";
-    const ctxPleasure = $("#dashboard-plot-canvas-4");
+    configPleasurePie.options.plugins.title.text = 'Pleasure State';
+    const ctxPleasure = $('#dashboard-plot-canvas-4');
     window.dashboard_plot_4 = new Chart(ctxPleasure, configPleasurePie);
 
     // ----- S M I L E - S T U F F 
     let configSmilePie = JSON.parse(JSON.stringify(configPie));
     configSmilePie.data.labels = uniqueSmileData;
     configSmilePie.data.datasets = [{
-        label: "Smile State",
+        label: 'Smile State',
         data: smileCounts,
         backgroundColor: poolColors(uniqueSmileData.length),
         hoverOffset: 4
     }];
-    configSmilePie.options.plugins.title.text = "Smile State";
-    const ctxSmile = $("#dashboard-plot-canvas-5");
+    configSmilePie.options.plugins.title.text = 'Smile State';
+    const ctxSmile = $('#dashboard-plot-canvas-5');
     window.dashboard_plot_5 = new Chart(ctxSmile, configSmilePie);
 }

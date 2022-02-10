@@ -13,8 +13,8 @@
  * * * -----> I M P O R T S <----- ----- ----- */
 
 const
-    router = require("express").Router(),
-    https = require("https");
+    router = require('express').Router(),
+    https = require('https');
 require('dotenv').config();
 
 /* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
@@ -22,10 +22,10 @@ require('dotenv').config();
  * * * -----> S E T U P <----- ----- ----- */
 
 [
-    "./dashboard", "./collector",
-    "./mensa", "./timetable", "./dialog",
-    "./auth/login", "./auth/logout",
-    "./fileserver"
+    './dashboard', './api',
+    './mensa', './timetable', './dialog',
+    './auth/login', './auth/logout',
+    './fileserver'
 ].forEach((elem) => {
     router.use(require(elem));
 });
@@ -34,56 +34,53 @@ require('dotenv').config();
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
  * * * -----> R O U T E S <----- ----- ----- */
 
-router.get("/docker-hbv-kms-http/ip", (req, res, next) => {
+router.get('/docker-hbv-kms-http/ip', (req, res, next) => {
     res.status(200).json({
         ip: req.headers['x-forwarded-for'] || req.socket.remoteAddress
     })
 });
 
 // http://localhost:3000/crypto?subject=price&symbol=BTC-USDT <- for testing only
-router.get("/docker-hbv-kms-http/crypto", (req, res, next) => {
+router.get('/docker-hbv-kms-http/crypto', (req, res, next) => {
 
     if (!(req.query && req.query.subject)) res.status(404).end();
-    if (req.query.subject === "price" && req.query.symbol) {
+    if (req.query.subject === 'price' && req.query.symbol) {
         const
-            base_url = "api.kucoin.com",
-            endpoint = "/api/v1/market/orderbook/level1?symbol=" + req.query.symbol.toUpperCase(); // req.body.symbol
+            base_url = 'api.kucoin.com',
+            endpoint = '/api/v1/market/orderbook/level1?symbol=' + req.query.symbol.toUpperCase(); // req.body.symbol
         let
             output = '',
-            message,
-            code;
+            message;
 
         const options = {
             host: base_url,
             path: endpoint,
-            method: "GET",
+            method: 'GET',
             json: true,
         };
 
-        var request = https.request(options, function (response) {
+        var request = https.request(options, (response) => {
             // console.log(options.host + ':' + res.statusCode);
             response.setEncoding('utf8');
-            response.on('data', function (chunk) {
+            response.on('data', (chunk) => {
                 output += chunk;
             });
 
-            response.on('end', function () {
+            response.on('end', () => {
                 output = JSON.parse(output)
                 res.send(output);
             });
         });
 
-        request.on('error', function (err) {
-            message = "Internal server error";
+        request.on('error', (err) => {
+            message = 'Internal server error';
             res.writeHead(500, message.toString(), {
                 'content-type': 'text/plain'
             });
             res.end(message.toString());
         });
         request.end();
-    } else {
-        res.status(404).end()
-    }
+    } else res.status(404).end();
 });
 
 

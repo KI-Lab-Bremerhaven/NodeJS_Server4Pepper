@@ -28,7 +28,7 @@ const {
 
 const {
     emotion_table_name,
-    conversation_table_name,
+    attributes_table_name,
     use_case_table_name,
     not_understand_table_name
 } = require("../config").TABLES;
@@ -76,7 +76,7 @@ router.get('/docker-hbv-kms-http/dashboard/view', verifyToken, (req, res, next) 
                 message: db_err_msg
             });
             else if (emotion_data.length === 0) res.status(404).end();
-            else con.query(`SELECT data FROM ${conversation_table_name} WHERE identifier = "${conversation_id}"`, (err, general_data) => {
+            else con.query(`SELECT data FROM ${attributes_table_name} WHERE identifier = "${conversation_id}"`, (err, general_data) => {
                 if (err) res.json({
                     message: db_err_msg
                 });

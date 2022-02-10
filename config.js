@@ -24,7 +24,7 @@ module.exports.PRODUCTION = {
 
 module.exports.TABLES = {
     emotion_table_name: "pepper_emotion_table",
-    conversation_table_name: "pepper_conversation_table",
+    attributes_table_name: "pepper_attributes_table",
     use_case_table_name: "pepper_use_case_table",
     not_understand_table_name: "pepper_did_not_understand_table"
 }

@@ -11,7 +11,7 @@
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
  * * * -----> I M P O R T S <----- ----- ----- */
 
-const router = require("express").Router();
+const router = require('express').Router();
 const jsdom = require('jsdom');
 const {
     JSDOM
@@ -19,13 +19,14 @@ const {
 
 const {
     myRequests
-} = require("./../lib/requests");
+} = require('./../lib/requests');
 
+const undefined = 'undefined';
 /* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
  * * * -----> R O U E T S <----- ----- ----- */
 
-router.get("/docker-hbv-kms-http/timetable", (req, res, next) => {
+router.get('/docker-hbv-kms-http/timetable', (req, res, next) => {
 
     /*
      * FUNCTION TO GET TIMETABLE OF SOME STUDIENGANG 
@@ -34,37 +35,37 @@ router.get("/docker-hbv-kms-http/timetable", (req, res, next) => {
 
     const query = req.query;
 
-    if (!(typeof query !== "undefined" && query &&
-            typeof query.course !== "undefined" && query.course
+    if (!(typeof query !== undefined && query &&
+            typeof query.course !== undefined && query.course
         )) res.status(404).end();
     else {
         const
             course = query.course.toUpperCase(),
-            kw = (typeof query.kw !== "undefined" && query.kw) ? query.kw : 48;
+            kw = (typeof query.kw !== undefined && query.kw) ? query.kw : 48;
         let
             semester = null,
             timetable = {
-                "Mo": [],
-                "Di": [],
-                "Mi": [],
-                "Do": [],
-                "Fr": []
+                'Mo': [],
+                'Di': [],
+                'Mi': [],
+                'Do': [],
+                'Fr': []
             };
 
-        if (typeof query.semester !== "undefined" && query.semester) semester = query.semester
+        if (typeof query.semester !== undefined && query.semester) semester = query.semester
 
         const
             course_names = [`${course}_B1`, `${course}_B3`, `${course}_B5`, `${course}_B7`],
             course_name = (semester) ? `${course}_B${semester}` : null;
 
         try {
-            const url = "www4.hs-bremerhaven.de";
+            const url = 'www4.hs-bremerhaven.de';
             // get the courseId's
             myRequests(
                 data_to_send = {},
                 host = url,
-                endpoint = "/fb2/ws2122.php?action=showfb&fb=%23SPLUS938DBF",
-                method = "GET",
+                endpoint = '/fb2/ws2122.php?action=showfb&fb=%23SPLUS938DBF',
+                method = 'GET',
                 callback = (response) => {
                     if (!response.statusCode === 200) res.status(reponse.statusCode).end();
                     else {
@@ -74,7 +75,7 @@ router.get("/docker-hbv-kms-http/timetable", (req, res, next) => {
                             course_ids = [], // all courseIds 
                             custom_course_id = null; // id for one specific semester
 
-                        Array.from(dom.window.document.getElementsByName("identifier")[0].options).forEach(option => {
+                        Array.from(dom.window.document.getElementsByName('identifier')[0].options).forEach(option => {
                             courses[option.text] = option.value;
                             if (option.text === course_name) custom_course_id = option.value;
                         });
@@ -87,13 +88,13 @@ router.get("/docker-hbv-kms-http/timetable", (req, res, next) => {
                         }
 
                         function uptdateTimeTable(timetable, dom) {
-                            Array.from(dom.window.document.getElementsByTagName("tr")).forEach(table_data => {
-                                if (Object.keys(timetable).includes(table_data.getElementsByTagName("td")[0].innerHTML)) {
-                                    timetable[table_data.getElementsByTagName("td")[0].innerHTML].push({
-                                        begin: table_data.getElementsByTagName("td")[1].innerHTML,
-                                        end: table_data.getElementsByTagName("td")[2].innerHTML,
-                                        course: table_data.getElementsByTagName("td")[3].innerHTML,
-                                        prof: table_data.getElementsByTagName("td")[4].innerHTML,
+                            Array.from(dom.window.document.getElementsByTagName('tr')).forEach(table_data => {
+                                if (Object.keys(timetable).includes(table_data.getElementsByTagName('td')[0].innerHTML)) {
+                                    timetable[table_data.getElementsByTagName('td')[0].innerHTML].push({
+                                        begin: table_data.getElementsByTagName('td')[1].innerHTML,
+                                        end: table_data.getElementsByTagName('td')[2].innerHTML,
+                                        course: table_data.getElementsByTagName('td')[3].innerHTML,
+                                        prof: table_data.getElementsByTagName('td')[4].innerHTML,
                                     })
                                 }
                             });
@@ -105,11 +106,11 @@ router.get("/docker-hbv-kms-http/timetable", (req, res, next) => {
                         myRequests(data_to_send = {},
                             host = url,
                             endpoint = getEndpoint(0, custom_course_id),
-                            method = "GET",
+                            method = 'GET',
                             callback = (response) => {
                                 // console.log(response)
                                 if (!response.statusCode === 200) res.status(reponse.statusCode).end();
-                                else if (typeof query.htmlOnly !== "undefined" && query.htmlOnly) {
+                                else if (typeof query.htmlOnly !== undefined && query.htmlOnly) {
                                     res.set({ // not working for some reason
                                         'content-type': 'text/html; charset=UTF-8'
                                     });
@@ -121,7 +122,7 @@ router.get("/docker-hbv-kms-http/timetable", (req, res, next) => {
                                     else if (course_ids.length > 1) myRequests(data_to_send = {},
                                         host = url,
                                         endpoint = getEndpoint(1),
-                                        method = "GET",
+                                        method = 'GET',
                                         callback = (response) => {
                                             // console.log(response)
                                             if (!response.statusCode === 200) res.status(reponse.statusCode).end();
@@ -131,7 +132,7 @@ router.get("/docker-hbv-kms-http/timetable", (req, res, next) => {
                                                 if (course_ids.length > 2) myRequests(data_to_send = {},
                                                     host = url,
                                                     endpoint = getEndpoint(2),
-                                                    method = "GET",
+                                                    method = 'GET',
                                                     callback = (response) => {
                                                         if (!response.statusCode === 200) res.status(reponse.statusCode).end();
                                                         else {
@@ -140,7 +141,7 @@ router.get("/docker-hbv-kms-http/timetable", (req, res, next) => {
                                                             if (course_ids.length > 3) myRequests(data_to_send = {},
                                                                 host = url,
                                                                 endpoint = getEndpoint(3),
-                                                                method = "GET",
+                                                                method = 'GET',
                                                                 callback = (response) => {
                                                                     if (!response.statusCode === 200) res.status(reponse.statusCode).end();
                                                                     else {
@@ -149,7 +150,7 @@ router.get("/docker-hbv-kms-http/timetable", (req, res, next) => {
                                                                         if (course_ids.length > 4) myRequests(data_to_send = {},
                                                                             host = url,
                                                                             endpoint = getEndpoint(4),
-                                                                            method = "GET",
+                                                                            method = 'GET',
                                                                             callback = (response) => {
                                                                                 if (!response.statusCode === 200) res.status(reponse.statusCode).end();
                                                                                 else {
