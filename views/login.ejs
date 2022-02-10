@@ -1,33 +1,33 @@
   
-<%- include("header.ejs" )%>
+<%- include('header.ejs' )%>
         <title>Login</title>
     </head>
     <body>
-        <div class="container col-4 mt-5">
+        <div class='container col-4 mt-5'>
             <h1>Login</h1>
         </div>
 
-        <div class="container col-4">
-            <form action="/docker-hbv-kms-http/login" method="POST">
-                <div class="input-group col-xs-4 mb-3">
-                    <input id="username_input" name="username_input"
-                        type="text" 
-                        class="form-control" 
-                        placeholder="Ralf" 
-                        aria-label="Username" 
-                        aria-describedby="basic-addon1"
+        <div class='container col-4'>
+            <form action='/docker-hbv-kms-http/login' method='POST'>
+                <div class='input-group col-xs-4 mb-3'>
+                    <input id='username_input' name='username_input'
+                        type='text' 
+                        class='form-control' 
+                        placeholder='Ralf' 
+                        aria-label='Username' 
+                        aria-describedby='basic-addon1'
                         required>
                 </div>
-                <div class="input-groupcol-xs-4 mb-3">
-                    <input id="password_input" name="password_input"
-                        type="password" 
-                        class="form-control" 
-                        placeholder="Password1234" 
-                        aria-label="Password" 
-                        aria-describedby="basic-addon1"
+                <div class='input-groupcol-xs-4 mb-3'>
+                    <input id='password_input' name='password_input'
+                        type='password' 
+                        class='form-control' 
+                        placeholder='Password1234' 
+                        aria-label='Password' 
+                        aria-describedby='basic-addon1'
                         required>
                 </div>
-                <button type="submit" class="btn btn-success">Submit</button>
+                <button type='submit' class='btn btn-success'>Submit</button>
             </form>
         </div>
     </body>

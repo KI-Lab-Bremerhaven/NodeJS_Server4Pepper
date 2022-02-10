@@ -34,14 +34,14 @@ require('dotenv').config();
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
  * * * -----> R O U T E S <----- ----- ----- */
 
-router.get('/docker-hbv-kms-http/ip', (req, res, next) => {
+router.get('/docker-hbv-kms-http/api/v1/ip', (req, res, next) => {
     res.status(200).json({
         ip: req.headers['x-forwarded-for'] || req.socket.remoteAddress
     })
 });
 
 // http://localhost:3000/crypto?subject=price&symbol=BTC-USDT <- for testing only
-router.get('/docker-hbv-kms-http/crypto', (req, res, next) => {
+router.get('/docker-hbv-kms-http/api/v1/crypto', (req, res, next) => {
 
     if (!(req.query && req.query.subject)) res.status(404).end();
     if (req.query.subject === 'price' && req.query.symbol) {

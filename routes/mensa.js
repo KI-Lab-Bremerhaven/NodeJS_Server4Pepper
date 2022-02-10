@@ -10,13 +10,13 @@ const
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
  * * * -----> R O U E T S <----- ----- ----- */
 
-router.get('/docker-hbv-kms-http/mensadata', (req, res) => {
+router.get('/docker-hbv-kms-http/api/v1/mensadata', (req, res) => {
     const filePath = `${__dirname}/../static/data/mensadata.json`;
     const jsonData = JSON.parse(fs.readFileSync(filePath, 'latin1'));
     res.send(jsonData);
 });
 
-router.get('/docker-hbv-kms-http/mensadata/img', (req, res) => {
+router.get('/docker-hbv-kms-http/api/v1/mensadata/img', (req, res) => {
     const filePath = `${__dirname}/../static/images/mensaplan.png`;
     const img = fs.readFileSync(filePath);
     res.writeHead(200, {

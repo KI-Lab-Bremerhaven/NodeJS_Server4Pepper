@@ -1,83 +1,83 @@
   
-<%- include("header.ejs" ) %>
-    <title><% if (typeof title !== "undefined" && title) { %> <%= title %> <% } %></title>
-    <link rel="stylesheet" type="text/css" href=<%if (environment === "PROD") { %> "/docker-hbv-kms-http/fileserver?name=dashboard.styles.css" <% } else { %> "/docker-hbv-kms-http/fileserver?name=dashboard.styles.css" <% } %>>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.3.1/dist/chart.min.js"></script>
-    <span id="environment" style="display: none"><%= environment %></span>
+<%- include('header.ejs' ) %>
+    <title><% if (typeof title !== 'undefined' && title) { %> <%= title %> <% } %></title>
+    <link rel='stylesheet' type='text/css' href=<%if (environment === 'PROD') { %> '/docker-hbv-kms-http/fileserver?name=dashboard.styles.css' <% } else { %> '/docker-hbv-kms-http/fileserver?name=dashboard.styles.css' <% } %>>
+    <script src='https://cdn.jsdelivr.net/npm/chart.js@3.3.1/dist/chart.min.js'></script>
+    <span id='environment' style='display: none'><%= environment %></span>
   </head>
   <body>
-    <%- include("navbar.ejs") %>
+    <%- include('navbar.ejs') %>
   
 
-    <div class="container mt-5">
-      <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+    <div class='container mt-5'>
+      <nav aria-label='breadcrumb'>
+        <ol class='breadcrumb'>
+          <li class='breadcrumb-item active' aria-current='page'>Dashboard</li>
         </ol>
       </nav>
       <h1>Admin Dashboard</h1>
     </div>      
 
-    <% if (typeof data !== "undefined" && data && JSON.parse(data).length > 0) { %>
+    <% if (typeof data !== 'undefined' && data && JSON.parse(data).length > 0) { %>
       <% const dataset = JSON.parse(data) %>
       <% if (JSON.parse(data).length > 20) { %>
-        <script src=<%if (environment === "Production") { %> "/docker-hbv-kms-http/fileserver?name=dashboard.chartjs.js" <% } else { %> "/docker-hbv-kms-http/fileserver?name=dashboard.chartjs.js" <% } %>></script>
-        <div class="container" id="dashboard-plot-view-wrapper">
-          <div class="dashboard-plot-container-wrapper">
-            <div class="dashboard-plot-container-lg">
-              <canvas id="dashboard-plot-canvas-1" class="canvas"></canvas>
+        <script src=<%if (environment === 'Production') { %> '/docker-hbv-kms-http/fileserver?name=dashboard.chartjs.js' <% } else { %> '/docker-hbv-kms-http/fileserver?name=dashboard.chartjs.js' <% } %>></script>
+        <div class='container' id='dashboard-plot-view-wrapper'>
+          <div class='dashboard-plot-container-wrapper'>
+            <div class='dashboard-plot-container-lg'>
+              <canvas id='dashboard-plot-canvas-1' class='canvas'></canvas>
             </div>
           </div>
-          <div class="dashboard-plot-container-wrapper">
-            <div class="dashboard-plot-container-sm">
-              <canvas id="dashboard-plot-canvas-2" class="canvas"></canvas>
+          <div class='dashboard-plot-container-wrapper'>
+            <div class='dashboard-plot-container-sm'>
+              <canvas id='dashboard-plot-canvas-2' class='canvas'></canvas>
             </div>
             
-            <div class="dashboard-plot-container-sm">
-              <canvas id="dashboard-plot-canvas-3" class="canvas"></canvas>
+            <div class='dashboard-plot-container-sm'>
+              <canvas id='dashboard-plot-canvas-3' class='canvas'></canvas>
             </div>
             
-            <div class="dashboard-plot-container-sm">
-              <canvas id="dashboard-plot-canvas-4" class="canvas"></canvas>
+            <div class='dashboard-plot-container-sm'>
+              <canvas id='dashboard-plot-canvas-4' class='canvas'></canvas>
             </div>
 
-            <div class="dashboard-plot-container-sm">
-              <canvas id="dashboard-plot-canvas-5" class="canvas"></canvas>
+            <div class='dashboard-plot-container-sm'>
+              <canvas id='dashboard-plot-canvas-5' class='canvas'></canvas>
             </div>
           </div>    
         </div>
       <% } %>
 
-      <div class="container">
-        <table class="table table-hover table-striped">
+      <div class='container'>
+        <table class='table table-hover table-striped'>
           <thead>
             <tr>
-              <th scope="col">#</th>
-              <th scope="col">Distance</th>
-              <th scope="col">Age</th>
-              <th scope="col">Gender</th>
-              <th scope="col">Basic Emotion</th>
-              <th scope="col">Pleasure State</th>
-              <th scope="col">Excitement State</th>
-              <th scope="col">Smile State</th>
-              <th scope="col">Dialog Time</th>
-              <th scope="col">TimeStamp</th>
+              <th scope='col'>#</th>
+              <th scope='col'>Distance</th>
+              <th scope='col'>Age</th>
+              <th scope='col'>Gender</th>
+              <th scope='col'>Basic Emotion</th>
+              <th scope='col'>Pleasure State</th>
+              <th scope='col'>Excitement State</th>
+              <th scope='col'>Smile State</th>
+              <th scope='col'>Dialog Time</th>
+              <th scope='col'>TimeStamp</th>
             </tr>
           </thead>
           <tbody>
           <% for(let i = 0; i < dataset.length; i++) { %>
           <% data = dataset[i] %>
-            <tr class="clickable-row" onclick=window.location=<%=`"/docker-hbv-kms-http/dashboard/view?conversation_id=${data['identifier'].toString()}"` %>>
-              <th scope="row"><%=i+1%></th>
-              <td><%= `${data["distance"]} meters` %></td>
-              <td><%= data["age"] %></td>
-              <td><%= data["gender"] %></td>
-              <td><%= data["basic_emotion"] %></td>
-              <td><%= data["pleasure_state"] %></td>
-              <td><%= data["excitement_state"] %></td>
-              <td><%= data["smile_state"] %></td>
-              <td><%= `${Math.floor(data["dialog_time"])}m ${parseInt((data["dialog_time"]%1)*60)}s` %></td>
-              <td><%= data["ts"] %></td>
+            <tr class='clickable-row' onclick=window.location=<%=`'/docker-hbv-kms-http/dashboard/view?conversation_id=${data['identifier'].toString()}'` %>>
+              <th scope='row'><%=i+1%></th>
+              <td><%= `${data['distance']} meters` %></td>
+              <td><%= data['age'] %></td>
+              <td><%= data['gender'] %></td>
+              <td><%= data['basic_emotion'] %></td>
+              <td><%= data['pleasure_state'] %></td>
+              <td><%= data['excitement_state'] %></td>
+              <td><%= data['smile_state'] %></td>
+              <td><%= `${Math.floor(data['dialog_time'])}m ${parseInt((data['dialog_time']%1)*60)}s` %></td>
+              <td><%= data['ts'] %></td>
             </tr>
           <% } %>
 

@@ -22,16 +22,16 @@ const {
 } = require('./../lib/requests');
 
 const undefined = 'undefined';
+
 /* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
  * * * -----> R O U E T S <----- ----- ----- */
 
-router.get('/docker-hbv-kms-http/timetable', (req, res, next) => {
-
-    /*
-     * FUNCTION TO GET TIMETABLE OF SOME STUDIENGANG 
-     * e.g.: http://localhost:3000/docker-hbv-kms-http/timetable?course=WI&semester=3
-     */
+/**
+ * FUNCTION TO GET TIMETABLE OF SOME STUDIENGANG 
+ * e.g.: http://localhost:3000/docker-hbv-kms-http/api/v1/timetable?course=WI&semester=3
+ */
+router.get('/docker-hbv-kms-http/api/v1/timetable', (req, res, next) => {
 
     const query = req.query;
 

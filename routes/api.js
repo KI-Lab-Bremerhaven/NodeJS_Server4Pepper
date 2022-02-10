@@ -1,5 +1,5 @@
 /**
- * This Routes handles requests to store and get data into and from the database. 
+ * This Router handles requests to store and get data into and from the database. 
  * Getting Data is only possible if the user has a verifieed JWT Token.
  * 
  * @version 1.0
@@ -49,7 +49,7 @@ const
     undefined = 'undefined',
     unknown = 'UNKNOWN';
 
-var pool = mysql.createPool({
+let pool = mysql.createPool({
     connectionLimit: 10, // default = 10
     host: DB_HOST,
     user: DB_USER,
@@ -279,11 +279,13 @@ router.get('/docker-hbv-kms-http/api/v1/saveNotUnderstandPhrases', (req, res, ne
  * Returns n rows of emotion table; this is used in the admin dashboard
  * e.g.: https://informatik.hs-bremerhaven.de/docker-hbv-kms-http/getData?n=100
  */
-router.get('/docker-hbv-kms-http/getData', verifyToken, (req, res, next) => {
+router.get('/docker-hbv-kms-http/api/v1/getData', verifyToken, (req, res, next) => {
     const query = req.query;
-    let query_string;
+    let query_string = 'LIMIT ';
 
-    if (typeof query.n !== 'number') query_string = `LIMIT ${query.n}`
+    if (typeof query.n !== 'number') query_string += '250';
+    else query_string += ` ${query.n}`
+
     pool.getConnection((err, con) => {
         con.query(`SELECT * FROM ${emotion_table_name} ORDER BY ts DESC ${query_string}`, (err, rows) => {
             con.release()
