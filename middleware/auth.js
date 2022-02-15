@@ -13,7 +13,8 @@
 
 const
     jwt = require('jsonwebtoken'),
-    fs = require('fs');
+    fs = require('fs'),
+    path = require('path');
 
 const RSA_PUBLIC_KEY = fs.readFileSync(path.join(__dirname, '..', 'keys', 'id_rsa_priv.pem'));
 

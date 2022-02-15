@@ -65,14 +65,14 @@ pool.getConnection((err, con) => {
         var sql = `CREATE TABLE IF NOT EXISTS ${emotion_table_name} (data_id INT NOT NULL AUTO_INCREMENT, identifier VARCHAR(128), distance `;
         sql += 'VARCHAR(20), age VARCHAR(20), gender VARCHAR(20), basic_emotion VARCHAR(50), pleasure_state VARCHAR(30), excitement_state VARCHAR(30),';
         sql += 'smile_state VARCHAR(30), dialog_time VARCHAR(30), ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, PRIMARY KEY (data_id))';
-        con.query(sql, function (err, result) {
+        con.query(sql, (err, result) => {
             if (err) throw err;
             //else console.log(`Table ${emotion_table_name} created`);
         });
 
         // OTHER CONVERSATION DATA
         sql = `CREATE TABLE IF NOT EXISTS ${attributes_table_name} (data_id INT NOT NULL AUTO_INCREMENT, identifier VARCHAR(128), data LONGTEXT, ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, PRIMARY KEY (data_id))`;
-        con.query(sql, function (err, result) {
+        con.query(sql, (err, result) => {
             if (err) throw err;
             //else console.log(`Table ${conversation_table_name} created`);
         });
@@ -80,7 +80,7 @@ pool.getConnection((err, con) => {
         // USE CASE TABLE
         sql = `CREATE TABLE IF NOT EXISTS ${use_case_table_name} (data_id INT NOT NULL AUTO_INCREMENT, `;
         sql += 'identifier VARCHAR(128), use_case VARCHAR(128), ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, PRIMARY KEY (data_id))';
-        con.query(sql, function (err, result) {
+        con.query(sql, (err, result) => {
             if (err) throw err;
             //else console.log(`Table ${use_case_table_name} created`);
         });
@@ -88,7 +88,7 @@ pool.getConnection((err, con) => {
         // DID NOT UNDERSTAND PHRASES TABLE
         sql = `CREATE TABLE IF NOT EXISTS ${not_understand_table_name} (data_id INT NOT NULL AUTO_INCREMENT, `;
         sql += 'identifier VARCHAR(128), phrase VARCHAR(1024), ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, PRIMARY KEY (data_id))';
-        con.query(sql, function (err, result) {
+        con.query(sql, (err, result) => {
             if (err) throw err;
             //else console.log(`Table ${not_understand_table_name} created`);
         });
@@ -315,10 +315,11 @@ router.post('/docker-hbv-kms-http/api/v1/sql', (req, res, next) => {
         else pool.getConnection((err, con) => {
             if (err) res.status(500).send(`${err}`).end();
             con.query(body.query_str, (err, rows) => {
-                con.release()
+                con.release();
                 if (err) res.status(500).send(`${err}`).end();
                 else res.status(200).json(rows);
             });
+
         });
     } else next();
 });

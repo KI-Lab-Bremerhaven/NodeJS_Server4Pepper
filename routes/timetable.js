@@ -128,7 +128,6 @@ router.get('/docker-hbv-kms-http/api/v1/timetable', (req, res, next) => {
                                             if (!response.statusCode === 200) res.status(reponse.statusCode).end();
                                             else {
                                                 timetable = uptdateTimeTable(timetable, new JSDOM(response));
-
                                                 if (course_ids.length > 2) myRequests(data_to_send = {},
                                                     host = url,
                                                     endpoint = getEndpoint(2),
