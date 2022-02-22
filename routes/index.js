@@ -43,7 +43,7 @@ router.get('/docker-hbv-kms-http/api/v1/ip', (req, res, next) => {
 // http://localhost:3000/crypto?subject=price&symbol=BTC-USDT <- for testing only
 router.get('/docker-hbv-kms-http/api/v1/crypto', (req, res, next) => {
 
-    if (!(req.query && req.query.subject)) res.status(404).end();
+    if (!(req.query && req.query.subject)) res.status(400).end();
     if (req.query.subject === 'price' && req.query.symbol) {
         const
             base_url = 'api.kucoin.com',

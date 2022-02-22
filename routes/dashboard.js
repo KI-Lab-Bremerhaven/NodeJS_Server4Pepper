@@ -75,7 +75,7 @@ router.get('/docker-hbv-kms-http/dashboard/view', verifyToken, (req, res, next) 
             if (err) res.json({
                 message: db_err_msg
             });
-            else if (emotion_data.length === 0) res.status(404).end();
+            else if (emotion_data.length === 0) res.status(400).end();
             else con.query(`SELECT data FROM ${attributes_table_name} WHERE identifier = "${conversation_id}"`, (err, general_data) => {
                 if (err) res.json({
                     message: db_err_msg

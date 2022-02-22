@@ -110,7 +110,7 @@ router.post('/docker-hbv-kms-http/api/v1/saveAttributeData', (req, res, next) =>
         identifier = body.identifier,
         data = body.data;
 
-    if (!(typeof data !== undefined && data)) res.status(401).json({
+    if (!(typeof data !== undefined && data)) res.status(400).json({
         message: 'No data provided!'
     }).end();
     else {
@@ -139,7 +139,7 @@ router.post('/docker-hbv-kms-http/api/v1/saveAttributeData', (req, res, next) =>
                 }
             });
         } catch (err) {
-            res.status(401).json({
+            res.status(400).json({
                 message: 'Data should be a valid object in format JSON'
             }).end();
         }
@@ -152,7 +152,7 @@ router.post('/docker-hbv-kms-http/api/v1/saveAttributeData', (req, res, next) =>
 router.get('/docker-hbv-kms-http/api/v1/saveEmotionData', (req, res, next) => {
     const query = req.query;
 
-    if (typeof query === undefined || !query) res.status(401).end();
+    if (typeof query === undefined || !query) res.status(400).end();
     else {
         let
             identifier = query.identifier,
@@ -180,7 +180,7 @@ router.get('/docker-hbv-kms-http/api/v1/saveEmotionData', (req, res, next) => {
                 identifier, distance, age, gender, basic_emotion,
                 pleasure_state, excitement_state,
                 smile_state, dialog_time
-            ].includes(v.toLocaleLowerCase()))) res.status(401).json({
+            ].includes(v.toLocaleLowerCase()))) res.status(400).json({
             message: 'Invalid parameter!'
         }).end();
 
@@ -209,7 +209,7 @@ router.get('/docker-hbv-kms-http/api/v1/saveEmotionData', (req, res, next) => {
 router.get('/docker-hbv-kms-http/api/v1/saveUseCaseData', (req, res, next) => {
 
     const query = req.query;
-    if (typeof query === 'undefined' || !query) res.status(401).end();
+    if (typeof query === 'undefined' || !query) res.status(400).end();
     else {
         let
             identifier = query.identifier,
@@ -217,7 +217,7 @@ router.get('/docker-hbv-kms-http/api/v1/saveUseCaseData', (req, res, next) => {
         if (!(typeof identifier !== undefined && identifier)) identifier = unknown;
         if (!(typeof use_case !== undefined && use_case)) use_case = unknown;
 
-        if (dirty_sql_words.some(v => [identifier, use_case].includes(v.toLocaleLowerCase()))) res.status(401).json({
+        if (dirty_sql_words.some(v => [identifier, use_case].includes(v.toLocaleLowerCase()))) res.status(400).json({
             message: 'Invalid parameter!'
         }).end();
 
@@ -244,7 +244,7 @@ router.get('/docker-hbv-kms-http/api/v1/saveUseCaseData', (req, res, next) => {
  */
 router.get('/docker-hbv-kms-http/api/v1/saveNotUnderstandPhrases', (req, res, next) => {
     const query = req.query;
-    if (typeof query === 'undefined' || !query) res.status(401).end();
+    if (typeof query === 'undefined' || !query) res.status(400).end();
     else {
         if (!(typeof query.identifier !== undefined && query.identifier)) query.identifier = unknown;
         if (!(typeof query.phrase !== undefined && query.phrase)) query.phrase = unknown;
@@ -253,7 +253,7 @@ router.get('/docker-hbv-kms-http/api/v1/saveNotUnderstandPhrases', (req, res, ne
             identifier = query.identifier,
             phrase = query.phrase;
 
-        if (dirty_sql_words.some(v => [phrase, identifier].includes(v.toLocaleLowerCase()))) res.status(401).json({
+        if (dirty_sql_words.some(v => [phrase, identifier].includes(v.toLocaleLowerCase()))) res.status(400).json({
             message: 'Invalid parameter!'
         }).end();
 
@@ -311,7 +311,7 @@ router.post('/docker-hbv-kms-http/api/v1/sql', (req, res, next) => {
     }).end();
     else if (typeof body.query_str !== undefined && body.query_str) {
         const unwanted_actions = ['drop', 'delete', 'show', 'users', 'insert', 'into', 'create'];
-        if (unwanted_actions.some(v => body.query_str.includes(v.toLocaleLowerCase()))) res.status(401).send('Invalid SQL command!').end();
+        if (unwanted_actions.some(v => body.query_str.includes(v.toLocaleLowerCase()))) res.status(400).send('Invalid SQL command!').end();
         else pool.getConnection((err, con) => {
             if (err) res.status(500).send(`${err}`).end();
             con.query(body.query_str, (err, rows) => {

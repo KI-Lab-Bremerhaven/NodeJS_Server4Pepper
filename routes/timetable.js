@@ -37,7 +37,7 @@ router.get('/docker-hbv-kms-http/api/v1/timetable', (req, res, next) => {
 
     if (!(typeof query !== undefined && query &&
             typeof query.course !== undefined && query.course
-        )) res.status(404).end();
+        )) res.status(400).end();
     else {
         const
             course = query.course.toUpperCase(),

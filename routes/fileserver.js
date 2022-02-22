@@ -27,6 +27,7 @@ router.get('/docker-hbv-kms-http/fileserver', (req, res, next) => {
     else if (query.name === 'dashboard.styles.css') res.sendFile(path.join(__dirname, '..', 'static', 'css', 'dashboard.styles.css'));
     else if (query.name === 'dashboard.chartjs.js') res.sendFile(path.join(__dirname, '..', 'static', 'scripts', 'dashboard.chartjs.js'));
     else res.json({
+        status_code: 404,
         message: 'File not found!'
     });
 });
