@@ -4,6 +4,8 @@ This web application serves as an interface between the university robot Pepper 
 
 It will be used to dynamically send data to Pepper from the Internet, and will also connect to a Nextcloud database to which Pepper will automatically backup and retrieve data via this service. This application will run on the university server in a Docker on a shared user.
 
+![Dashboard Image](static/images/dashboard.png?raw=true "Dashboard")
+
 ## Requirements
 
 - NodeJS (v16.6.1+)

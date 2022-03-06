@@ -132,11 +132,11 @@ $(document).ready(() => {
         url: `${url}?n=250`,
         type: 'GET',
         dataType: 'json',
-        success: function (data) {
+        success: (data) => {
             dialogTimePlot(data);
             pieCharts(data);
         },
-        error: function (XMLHttpRequest, textStatus, errorThrown) {
+        error: (XMLHttpRequest, textStatus, errorThrown) => {
             alert(`${JSON.stringify(XMLHttpRequest)}`);
         },
     });
