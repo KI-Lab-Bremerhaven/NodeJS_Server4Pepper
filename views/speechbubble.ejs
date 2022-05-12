@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../static/css/styles.css" />
+    <title>Museum</title>
+</head>
+<body>
+    <% if(messages.msg_box) { %>
+        <h1>Frag mich doch nach:</h1>
+        <% for(let i = 0; i < messages.msg_box.length; ++i) { %>
+                <% if(i%2==0) { %>
+                    <div class="bubble" style="animation-delay:<%= i %>s;"><%= messages.msg_box[i] %></div>
+                <% }else{ %>
+                    <div class="bubble2" style="animation-delay:<%= i %>s; margin-left: 5%;"><%= messages.msg_box[i] %></div>   
+                <% } %>
+        <% } %>
+    <% } %>
+</body>
+
+</html>

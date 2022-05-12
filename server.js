@@ -19,7 +19,9 @@ const
     http = require('http'),
     path = require('path'),
     cookieParser = require('cookie-parser'),
-    routes = require('./routes');
+    routes = require('./routes'),
+    session = require('express-session'),
+    flash = require('express-flash');
 
 const {
     PORT,
@@ -36,6 +38,16 @@ app.use(express.urlencoded({
     extended: true
 }));
 
+app.use(
+    session({
+      resave: true,
+      saveUninitialized: true,
+      secret:"Auohgf743t§%$&%/FT",
+      cookie: { secure: false, maxAge: 14400000 },
+    })
+);
+
+app.use(flash());
 app.use(cookieParser());
 app.set('view engine', 'ejs');
 app.engine('ejs', require('ejs').__express);

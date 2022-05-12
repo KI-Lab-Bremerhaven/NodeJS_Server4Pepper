@@ -83,7 +83,16 @@ router.get('/docker-hbv-kms-http/api/v1/crypto', (req, res, next) => {
     } else res.status(404).end();
 });
 
-
+router.get('/docker-hbv-kms-http/speechbubble', (req, res) => {
+    const query = req.query;
+    if (!(typeof query !== undefined && query && typeof query.p !== undefined && query.p)){
+        res.status(404).end();
+    }else {
+        let msgs = query.p.split(";");
+        req.flash("msg_box", msgs);
+        res.render('speechbubble');
+    }
+});
 
 /* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
