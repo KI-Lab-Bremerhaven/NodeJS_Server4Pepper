@@ -12,7 +12,7 @@ module.exports.DEVELOPMENT = {
 
 module.exports.PRODUCTION = {
     PORT: process.env.PROD_PORT,
-    URL: "https://informatik.hs-bremerhaven.de/docker-hbv-kms-http/",
+    URL: 'https://informatik.hs-bremerhaven.de/docker-hbv-kms-http/',
     DB_HOST: process.env.DB_HOST,
     DB_USER: process.env.DB_USER,
     DB_PASSWORD: process.env.DB_PASSWORD,
@@ -21,9 +21,9 @@ module.exports.PRODUCTION = {
 };
 
 module.exports.TABLES = {
-    emotion_table_name: "pepper_emotion_table",
-    attributes_table_name: "pepper_attributes_table",
-    use_case_table_name: "pepper_use_case_table",
-    not_understand_table_name: "pepper_did_not_understand_table",
-    all_speach_text_table_name: "all_speach_text_table"
+    emotion_table_name: 'pepper_emotion_table',
+    attributes_table_name: 'pepper_attributes_table',
+    use_case_table_name: 'pepper_use_case_table',
+    not_understand_table_name: 'pepper_did_not_understand_table',
+    all_speach_text_table_name: 'all_speach_text_table'
 }

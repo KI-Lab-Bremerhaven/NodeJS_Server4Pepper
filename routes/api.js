@@ -323,7 +323,6 @@ router.post('/docker-hbv-kms-http/api/v1/sql', (req, res, next) => {
                 if (err) res.status(500).send(`${err}`).end();
                 else res.status(200).json(rows);
             });
-
         });
     } else next();
 });
