@@ -24,5 +24,6 @@ module.exports.TABLES = {
     emotion_table_name: "pepper_emotion_table",
     attributes_table_name: "pepper_attributes_table",
     use_case_table_name: "pepper_use_case_table",
-    not_understand_table_name: "pepper_did_not_understand_table"
+    not_understand_table_name: "pepper_did_not_understand_table",
+    all_speach_text_table_name: "all_speach_text_table"
 }

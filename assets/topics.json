@@ -1,0 +1,22 @@
+{
+    "greetings": ["Das backend sagt hallo", "Hallo", "Wie geht es dir", "Hey", "Schön"],
+
+    "use_cases":{
+        "hotel":{
+            "info": "...",
+            "reply_to":{
+                "Ich habe reserviert": "Das ist ja schön",
+                "Welches Zimmer ist das günstigste?": ["Zimmer 69"] 
+            }
+        },
+        "museum":{
+            "info": "some description",
+            "reply_to": {
+                "wo sind die Toiletten?": [
+                    "Hinten rechts", "Alle besetzt", "Wir stehen direkt davor"
+                ]
+            }
+        },
+        "pflege":{}
+    }
+}

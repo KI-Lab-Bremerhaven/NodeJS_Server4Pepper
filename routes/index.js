@@ -22,7 +22,7 @@ require('dotenv').config();
  * * * -----> S E T U P <----- ----- ----- */
 
 [
-    './dashboard', './api',
+    './dashboard', './api', './apiv2',
     './mensa', './timetable', './dialog',
     './auth/login', './auth/logout',
     './fileserver'
@@ -85,9 +85,9 @@ router.get('/docker-hbv-kms-http/api/v1/crypto', (req, res, next) => {
 
 router.get('/docker-hbv-kms-http/speechbubble', (req, res) => {
     const query = req.query;
-    if (!(typeof query !== undefined && query && typeof query.p !== undefined && query.p)){
+    if (!(typeof query !== undefined && query && typeof query.p !== undefined && query.p)) {
         res.status(404).end();
-    }else {
+    } else {
         let msgs = query.p.split(";");
         req.flash("msg_box", msgs);
         res.render('speechbubble');
