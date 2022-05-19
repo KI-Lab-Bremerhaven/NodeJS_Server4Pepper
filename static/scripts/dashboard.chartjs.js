@@ -127,7 +127,7 @@ const
     };
 
 $(document).ready(() => {
-    const url = ($('#environment').html() === 'PROD') ? 'https://informatik.hs-bremerhaven.de/docker-hbv-kms-http/api/v1/getData' : 'http://localhost:3000/docker-hbv-kms-http/api/v1/getData';
+    const url = ($('#environment').html() === 'PROD') ? 'https://informatik.hs-bremerhaven.de/docker-hbv-kms-http/api/v1/getData' : 'http://192.168.8.157:3000/docker-hbv-kms-http/api/v1/getData';
     $.ajax({
         url: `${url}?n=250`,
         type: 'GET',
@@ -137,7 +137,7 @@ $(document).ready(() => {
             pieCharts(data);
         },
         error: (XMLHttpRequest, textStatus, errorThrown) => {
-            alert(`${JSON.stringify(XMLHttpRequest)}`);
+            alert(`Ip Addresse ist flasch${JSON.stringify(XMLHttpRequest)}`);
         },
     });
 })
@@ -188,7 +188,7 @@ function avg(grades) {
 function dialogTimePlot(data) {
     const dialogTimeData = [...new Array(data.length)].map((e, i) => parseFloat(data[i].dialog_time));
     const avgDialogTime = avg(dialogTimeData);
-
+    
     const dialogTimeDataset = {
             label: 'Dialog Time',
             data: dialogTimeData,
@@ -223,7 +223,9 @@ function dialogTimePlot(data) {
     config.options.scales.y.title.text = 'time in minutes';
 
     const ctx = $('#dashboard-plot-canvas-1');
-    window.dashboard_plot_1 = new Chart(ctx, config);
+   
+        window.dashboard_plot_1 = new Chart(ctx, config);
+
 }
 
 /**

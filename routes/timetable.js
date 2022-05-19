@@ -5,7 +5,7 @@
  * @author Benjamin Thomas Schwertfeger
  * @email development@b-schwertfeger.de
  * @github https://github.com/ProjectPepperHSB/NodeJS_Server4Pepper
- * /
+ */
 
 // ! ------------------------------------------------------------------------------
 // * -----------------------------------------------------------------------------

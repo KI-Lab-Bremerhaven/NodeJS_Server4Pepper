@@ -12,7 +12,6 @@
 // *------------------------------------------------------------------------------
 
 const
-    fs = require('fs'),
     mysql = require('mysql');
 const router = require('express').Router();
 require('dotenv').config()
@@ -50,7 +49,7 @@ pool.getConnection((err, con) => {
     if (err) throw err;
     else {
         var sql = `CREATE TABLE IF NOT EXISTS ${all_speach_text_table_name} (data_id INT NOT NULL AUTO_INCREMENT, identifier VARCHAR(128),`;
-        sql += ', text VARCHAR(2048), ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, PRIMARY KEY (data_id))';
+        sql += ' text VARCHAR(2048), ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, PRIMARY KEY (data_id))';
         con.query(sql, (err) => {
             if (err) throw err;
         });
@@ -70,14 +69,14 @@ pool.getConnection((err, con) => {
  */
 const
     check_speach_input = (req, res, next) => {
-        const data = req.body.data;
+        const data = req.body;
         console.log(data);
         if (!(typeof (req.body) !== undefined && req.body &&
                 typeof data !== undefined && data &&
                 typeof (data.identifier) !== undefined &&
                 data.identifier &&
                 typeof (data.text) !== undefined && data.text &&
-                typeof (data.topix) !== undefined && data.topic
+                typeof (data.topic) !== undefined && data.topic
             )) res.status(400).json({
             message: 'No data provided!'
         }).end();
@@ -126,13 +125,13 @@ const
         }
     }
 check_reply_state = (req, res, next) => {
-    const data = req.body.data;
+    const data = req.body;
     req.response_state = undefined;
     if (!(typeof (data.needResponse) !== undefined && data.needResponse)) next();
     else {
         if (true) { //? do some checking what the user actually wants
             res.status(200).json({
-                'response': topic_data['greeings'][0]
+                'response': topic_data['greetings'][0]
             });
             req.response_state = "ok";
         } else {}
@@ -144,13 +143,14 @@ router.post('/docker-hbv-kms-http/api/v1/speach',
     check_store_in_db_state,
     check_reply_state,
     (req, res, next) => {
+        
         const data = req.body.data;
         let close_frame_needed = false;
         if (req.db_state !== undefined || req.db_state != "ok") {
             // ? do some logging
             close_frame_needed = true;
         }
-        if (req.response_state !== undefined || req.response_state != ok) {
+        if (req.response_state !== undefined || req.response_state != "ok") {
             // ? do some logging
             close_frame_needed = true;
         } else close_frame_needed = false;
@@ -158,6 +158,9 @@ router.post('/docker-hbv-kms-http/api/v1/speach',
         if (close_frame_needed) res.status(200).end();
     });
 
+router.get('/docker-hbv-kms-http/api/v1/speach',(req, res, next) => {
+    res.json("ok");
+    });
 // ! ------------------------------------------------------------------------------
 // * -----------------------------------------------------------------------------
 // *       E X P O R T         
