@@ -127,7 +127,7 @@ const
     };
 
 $(document).ready(() => {
-    const url = ($('#environment').html() === 'PROD') ? 'https://informatik.hs-bremerhaven.de/docker-hbv-kms-http/api/v1/getData' : 'http://localhost:3000/docker-hbv-kms-http/api/v1/getData';
+    const url = ($('#environment').html() === 'PROD') ? 'https://informatik.hs-bremerhaven.de/docker-hbv-kms-http/api/v1/getData' : 'http://192.168.8.157:3000/docker-hbv-kms-http/api/v1/getData';
     $.ajax({
         url: `${url}?n=250`,
         type: 'GET',

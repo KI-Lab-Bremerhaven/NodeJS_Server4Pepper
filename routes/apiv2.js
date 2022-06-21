@@ -69,24 +69,32 @@ pool.getConnection((err, con) => {
  */
 const
     check_speach_input = (req, res, next) => {
-        const data = req.body;
-        console.log(data);
+        let data = req.body;
+        console.log("check input: " + data);
+
         if (!(typeof (req.body) !== undefined && req.body &&
-                typeof data !== undefined && data &&
-                typeof (data.identifier) !== undefined &&
-                data.identifier &&
-                typeof (data.text) !== undefined && data.text &&
-                typeof (data.topic) !== undefined && data.topic
-            )) res.status(400).json({
-            message: 'No data provided!'
-        }).end();
-        else {
-            req.data = data;
-            next();
+        typeof data !== undefined && data && typeof data.data !== undefined && data.data)) res.status(400).end();
+        else{
+            try{
+                data = JSON.parse(data.data);
+
+                if (!( typeof (data.identifier) !== undefined &&
+                    data.identifier &&
+                    typeof (data.text) !== undefined && data.text &&
+                    typeof (data.topic) !== undefined && data.topic
+                )) res.status(400).json({
+                    message: 'No data provided!'
+                }).end();
+                else {
+                    req.data = data;
+                    next();
+                }
+            } catch {}
         }
     },
     check_store_in_db_state = (req, res, next) => {
         const data = req.data;
+        console.log("check db storrage: " + JSON.stringify(data))
         req.db_state = undefined;
         if (!(typeof (data.saveInDB) !== undefined && data.saveInDB)) next();
         else {
@@ -125,11 +133,13 @@ const
         }
     }
 check_reply_state = (req, res, next) => {
-    const data = req.body;
+    const data = req.data;
+    console.log("check response text: " + JSON.stringify(data))
     req.response_state = undefined;
     if (!(typeof (data.needResponse) !== undefined && data.needResponse)) next();
     else {
         if (true) { //? do some checking what the user actually wants
+            console.log(topic_data['greetings'][0])
             res.status(200).json({
                 'response': topic_data['greetings'][0]
             });

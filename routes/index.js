@@ -94,6 +94,11 @@ router.get('/docker-hbv-kms-http/speechbubble', (req, res) => {
     }
 });
 
+router.get('/docker-hbv-kms-http/hotel', (req, res) => {
+    res.render('hotel/index.html');
+    //res.render('hotel/notruf.html');
+});
+
 /* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
  * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
  * * * -----> E X P O R T S <----- ----- ----- */
