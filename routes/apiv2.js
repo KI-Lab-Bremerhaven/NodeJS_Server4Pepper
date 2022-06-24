@@ -11,16 +11,14 @@
 // *       I M P O R T S         
 // *------------------------------------------------------------------------------
 
-const
-    mysql = require('mysql');
+const mysql = require('mysql');
 const router = require('express').Router();
 require('dotenv').config()
 const {
     DB_HOST,
     DB_USER,
     DB_PASSWORD,
-    DB_NAME,
-    API_KEY
+    DB_NAME
 } = (process.env.NODE_ENV === 'PROD') ? require('../config').PRODUCTION: require('../config').DEVELOPMENT;
 
 const {
@@ -53,7 +51,6 @@ pool.getConnection((err, con) => {
         con.query(sql, (err) => {
             if (err) throw err;
         });
-
     }
 });
 
@@ -73,16 +70,16 @@ const
         console.log("check input: " + data);
 
         if (!(typeof (req.body) !== undefined && req.body &&
-        typeof data !== undefined && data && typeof data.data !== undefined && data.data)) res.status(400).end();
-        else{
-            try{
+                typeof data !== undefined && data && typeof data.data !== undefined && data.data)) res.status(400).end();
+        else {
+            try {
                 data = JSON.parse(data.data);
 
-                if (!( typeof (data.identifier) !== undefined &&
-                    data.identifier &&
-                    typeof (data.text) !== undefined && data.text &&
-                    typeof (data.topic) !== undefined && data.topic
-                )) res.status(400).json({
+                if (!(typeof (data.identifier) !== undefined &&
+                        data.identifier &&
+                        typeof (data.text) !== undefined && data.text &&
+                        typeof (data.topic) !== undefined && data.topic
+                    )) res.status(400).json({
                     message: 'No data provided!'
                 }).end();
                 else {
@@ -133,6 +130,10 @@ const
         }
     }
 check_reply_state = (req, res, next) => {
+    /**
+     * * Here can be defined what pepper should reply if needResponse is true.
+     * 
+     */
     const data = req.data;
     console.log("check response text: " + JSON.stringify(data))
     req.response_state = undefined;
@@ -148,11 +149,28 @@ check_reply_state = (req, res, next) => {
     }
 };
 
+/**
+ * Route to handle interaction triggered by speach to pepper
+ *  to store data in db (optional)
+ *  and reply (optional)
+ * 
+ * POST data must be in form:
+ * {
+ *      data: {
+ *          identifier: <some id>,
+ *          topic: string <current topic of peppers request or state>,
+ *          text: string <message to parse || speach text of user || etc. ...>,
+ *          saveInDB: boolean <if text should be stored in database>,
+ *          needResponse: boolean <if pepper needs some response like text anwesers>
+ *      }
+ * }
+ * 
+ */
 router.post('/docker-hbv-kms-http/api/v1/speach',
     check_speach_input,
     check_store_in_db_state,
     check_reply_state,
-    (req, res, next) => {
+    (req, res) => {
         let close_frame_needed = false;
         if (req.db_state !== undefined || req.db_state !== 'ok') {
             // ? do some logging

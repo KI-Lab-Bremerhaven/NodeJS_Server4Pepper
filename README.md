@@ -37,19 +37,21 @@ git clone https://github.com/ProjectPepperHSB/NodeJS_Server4Pepper.git
 
 ## Initialization
 
-- install required node packages
+1. install required node packages
 
 ```bash
 NodeJS_Server4Pepper:~$ npm i
 ```
 
-- create database (edit .env for custom credentials)
+2. reate database (edit .env for custom credentials)
 
 ```bash
 mysql -e "CREATE DATABASE pepperbackend"
 ```
 
-- edit .env file (example configuration in .exanple_env)
+3. Edit .env file (example configuration in .exanple_env)
+
+4. Generate ID RSA Key pairs and save the public and private key in `/keys` (they are needed for JWT-based user authentication)
 
 ## Run the application
 
@@ -65,7 +67,34 @@ NodeJS_Server4Pepper:~$ npm run dev
 NodeJS_Server4Pepper:~$ npm run prod
 ```
 
-## Notes
+## File structure and possibilities
 
-- To run this application with the dashboard / login function you will need to create a rsa keypair!
+|Directories|Description|
+|--------|--------|
+|`/assets`|Storrage of for example `topics.json` where one can reply to pepper speach|
+|`/keys`|RSA keys for user authentication|
+|`/lib`|Data structures which can be used everywhere|
+|`/middleware`|Middlewares which are used more than once (maybe)|
+|`/routes`|Endpoints of this server application|
+|`/static`|files that does not change and can be included dynamically|
+|`/views`|`.html`-like files that cann be rendered by the defined routes|
 
+|Files|Description|
+|-----|-----|
+|`.env`|Credentials and settings file; must be added by hand|
+|`.example.env`|This is hot `.env` should loog like|
+|`.gitignore`|...|
+|`config.js`|This file loads the config files|
+|`deploy.sh`|Script to deploy on server|
+|`LICENSE`|License statement of the authors.|
+|`package-lock.json`|Automatic generated file|
+|`package.json`|This defines the framework of this app; scripts are implemented there to start the app|
+|`README.md`|...|
+|`server.js`|Main program|
+
+
+#### Reply to speach by server
+`/routes/apiv2.js` contains the reply to speach implementation which can be triggered by pepper to anwser text from `/assets/topics.json`. 
+
+#### Save data to Database 
+Endpoints for interaction between Pepper and the backend can be found in ``/routes/api.js`
