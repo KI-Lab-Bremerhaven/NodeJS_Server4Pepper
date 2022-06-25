@@ -77,7 +77,7 @@ NodeJS_Server4Pepper:~$ npm run prod
 |`/middleware`|Middlewares which are used more than once (maybe)|
 |`/routes`|Endpoints of this server application|
 |`/static`|files that does not change and can be included dynamically|
-|`/views`|`.html`-like files that cann be rendered by the defined routes|
+|`/views`|`.html`-like files that can be rendered by the defined routes|
 
 |Files|Description|
 |-----|-----|
@@ -97,4 +97,4 @@ NodeJS_Server4Pepper:~$ npm run prod
 `/routes/apiv2.js` contains the reply to speach implementation which can be triggered by pepper to anwser text from `/assets/topics.json`. 
 
 #### Save data to Database 
-Endpoints for interaction between Pepper and the backend can be found in ``/routes/api.js`
+Endpoints for interaction between Pepper and the backend can be found in `/routes/api.js`
