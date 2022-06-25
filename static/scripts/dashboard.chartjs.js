@@ -2,15 +2,15 @@
  * This script loads collected conversation data from the backend database via AJAX
  * and created Plots to visualize Distributoins.
  *     (Route: /docker-hbv-kms/dashboard)
- * 
+ *
  *  @version: 1.0.0
  *  @author: Benjamin Thomas Schwertfeger (2022)
  *  @email development@b-schwertfeger.de
  *  @github: https://github.com/ProjectPepperHSB/NodeJS_Server4Pepper
  **/
 
-/* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * * 
- * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * 
+/* * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * * *
+ * * * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- * * *
  * * * -----> S E T T I N G S <----- ----- ----- */
 
 const
@@ -127,7 +127,7 @@ const
     };
 
 $(document).ready(() => {
-    const url = ($('#environment').html() === 'PROD') ? 'https://informatik.hs-bremerhaven.de/docker-hbv-kms-http/api/v1/getData' : 'http://192.168.8.157:3000/docker-hbv-kms-http/api/v1/getData';
+    const url = ($('#environment').html() === 'PROD') ? 'https://informatik.hs-bremerhaven.de/docker-hbv-kms-http/api/v1/getData' : 'http://localhost:3000/docker-hbv-kms-http/api/v1/getData';
     $.ajax({
         url: `${url}?n=250`,
         type: 'GET',
@@ -145,7 +145,7 @@ $(document).ready(() => {
 /**
  * @name dynamicColors
  * @description Return random rgb colorstring
- * 
+ *
  * @returns {string} rgba colorstring
  */
 function dynamicColors() {
@@ -159,8 +159,8 @@ function dynamicColors() {
 /**
  * @name poolColors
  * @description Return a array filled with random rgba colorstrings
- * @param {number} a 
- * 
+ * @param {number} a
+ *
  * @returns {Array} pool
  */
 function poolColors(a) {
@@ -171,8 +171,8 @@ function poolColors(a) {
 /**
  * @name avg
  * @description Return the average value of array
- * @param {Array} grades 
- * 
+ * @param {Array} grades
+ *
  * @returns {number} average
  */
 function avg(grades) {
@@ -183,12 +183,12 @@ function avg(grades) {
 /**
  * @name dialogTimePlot
  * @description Creates a chart to visualize the dialog time for every entry in data
- * @param {Object} data 
+ * @param {Object} data
  */
 function dialogTimePlot(data) {
     const dialogTimeData = [...new Array(data.length)].map((e, i) => parseFloat(data[i].dialog_time));
     const avgDialogTime = avg(dialogTimeData);
-    
+
     const dialogTimeDataset = {
             label: 'Dialog Time',
             data: dialogTimeData,
@@ -223,7 +223,7 @@ function dialogTimePlot(data) {
     config.options.scales.y.title.text = 'time in minutes';
 
     const ctx = $('#dashboard-plot-canvas-1');
-   
+
         window.dashboard_plot_1 = new Chart(ctx, config);
 
 }
@@ -231,7 +231,7 @@ function dialogTimePlot(data) {
 /**
  * @name pieCharts
  * @description Creates a chart to visualize the distribution of genders, basic emotions, pleasure states and smile states
- * @param {Object} data 
+ * @param {Object} data
  */
 function pieCharts(data) {
 
@@ -315,7 +315,7 @@ function pieCharts(data) {
     const ctxPleasure = $('#dashboard-plot-canvas-4');
     window.dashboard_plot_4 = new Chart(ctxPleasure, configPleasurePie);
 
-    // ----- S M I L E - S T U F F 
+    // ----- S M I L E - S T U F F
     let configSmilePie = JSON.parse(JSON.stringify(configPie));
     configSmilePie.data.labels = uniqueSmileData;
     configSmilePie.data.datasets = [{
